@@ -36,12 +36,18 @@ dependencies:
   firebase_storage: ^10.3.2
   flutter:
     sdk: flutter
+  fluttertoast: ^8.0.9
+  image_cropper: ^2.0.3
+  image_downloader: ^0.31.0
   flutter_image_slideshow: ^0.1.2
   google_fonts: ^3.0.1
   image_picker: ^0.8.5+3
   page_transition: ^2.0.9
   permission_handler: ^10.0.0
-  simple_gradient_text: 1.2.3
+  intl: ^0.17.0
+  transparent_image: ^2.0.0
+  uuid: ^3.0.6
+  simple_gradient_text: ^1.2.3
 
 dev_dependencies:
 

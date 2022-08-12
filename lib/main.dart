@@ -44,7 +44,6 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.quicksandTextTheme(
           Theme.of(context).textTheme.apply(
                 bodyColor: Colors.white,
-                displayColor: Colors.blue,
               ),
         ),
         scaffoldBackgroundColor: backgroundColor,

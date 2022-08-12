@@ -45,13 +45,13 @@ class _UploadScreenState extends State<UploadScreen> {
                 CustomTextField(
                   controller: controllerTitle,
                   hintText: 'Title',
-                  ObsecureText: false,
+                  obsecureText: false,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 CustomTextField(
                   controller: controllerComment,
                   hintText: 'Comment',
-                  ObsecureText: false,
+                  obsecureText: false,
                 ),
                 const SizedBox(height: 20),
                 // Center(

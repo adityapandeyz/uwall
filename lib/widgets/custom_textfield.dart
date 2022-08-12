@@ -1,35 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:uwall/utils/colors.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
-  final bool ObsecureText;
-  final CustomTextFieldValidator;
+  final bool obsecureText;
+  final customTextFieldValidator;
   const CustomTextField({
     Key? key,
     required this.controller,
     required this.hintText,
-    required this.ObsecureText,
-    this.CustomTextFieldValidator,
+    required this.obsecureText,
+    this.customTextFieldValidator,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      cursorColor: Colors.white,
       decoration: InputDecoration(
         hintText: hintText,
-        border: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.black38),
+        filled: true,
+        fillColor: secondaryColor,
+        contentPadding:
+            const EdgeInsets.only(left: 18.0, bottom: 10.0, top: 12.0),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15.0),
         ),
-        enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.black38),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15.0),
         ),
       ),
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      validator: CustomTextFieldValidator,
-      obscureText: ObsecureText,
+      validator: customTextFieldValidator,
+      obscureText: obsecureText,
     );
   }
 }

@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:uwall/screens/home_screen.dart';
 import 'package:uwall/screens/upload_screen.dart';
 
-import 'screens/auth_screen.dart';
+import 'screens/auth/signin_screen.dart';
+import 'screens/auth/singup_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings routeSettings) {
   switch (routeSettings.name) {
-    case AuthScreen.routeName:
+    case SigninScreen.routeName:
       return MaterialPageRoute(
         settings: routeSettings,
-        builder: (_) => const AuthScreen(),
+        builder: (_) => const SigninScreen(),
+      );
+
+    case SignupScreen.routeName:
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => const SignupScreen(),
       );
     case HomeScreen.routeName:
       return MaterialPageRoute(
@@ -21,6 +29,19 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         settings: routeSettings,
         builder: (_) => const UploadScreen(),
       );
+    // case HomeScreen.routeName:
+    //   return PageTransition(
+    //     child: const HomeScreen(),
+    //     type: PageTransitionType.scale,
+    //     settings: routeSettings,
+    //   );
+
+    // case UploadScreen.routeName:
+    //   return PageTransition(
+    //     child: const UploadScreen(),
+    //     type: PageTransitionType.scale,
+    //     settings: routeSettings,
+    //   );
 
     default:
       return MaterialPageRoute(

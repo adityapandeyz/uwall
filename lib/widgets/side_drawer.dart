@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
+import 'package:uwall/utils/colors.dart';
 
 class SideDrawer extends StatelessWidget {
   const SideDrawer({Key? key}) : super(key: key);
@@ -35,6 +36,7 @@ class LogedInDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
     return Drawer(
+      backgroundColor: secondaryColor,
       child: Column(
         children: <Widget>[
           // const DrawerHeader(
@@ -62,6 +64,7 @@ class LogedInDrawer extends StatelessWidget {
             onTap: () => {},
           ),
           ListTile(
+            // leading: Icon(Icons.upload_rounded),
             title: GradientText(
               'Upload',
               style: const TextStyle(
@@ -69,8 +72,8 @@ class LogedInDrawer extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
               colors: const [
-                Color.fromARGB(255, 57, 14, 177),
-                Color.fromARGB(255, 214, 9, 9),
+                Color.fromARGB(255, 121, 73, 255),
+                Color.fromARGB(255, 255, 69, 69),
                 Color.fromARGB(255, 214, 9, 9),
               ],
             ),
@@ -78,32 +81,76 @@ class LogedInDrawer extends StatelessWidget {
               Navigator.of(context).pushNamed('/upload-screen'),
             },
           ),
+          const Divider(color: Colors.grey),
           ListTile(
+            leading: const Icon(Icons.search_rounded),
+            horizontalTitleGap: 1.0,
+            title: const Text(
+              'Search',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            onTap: () => {Navigator.of(context).pop()},
+          ),
+          ListTile(
+            leading: const Icon(Icons.category_rounded),
+            horizontalTitleGap: 1.0,
+            title: const Text(
+              'Categories',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            onTap: () => {Navigator.of(context).pop()},
+          ),
+          ListTile(
+            leading: const Icon(Icons.save_rounded),
+            horizontalTitleGap: 1.0,
+            title: const Text(
+              'Saved',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            onTap: () => {Navigator.of(context).pop()},
+          ),
+
+          ListTile(
+            leading: const Icon(Icons.feedback_outlined),
+            horizontalTitleGap: 1.0,
             title: const Text(
               'Submit Feedback',
               style: TextStyle(
                 fontSize: 20.0,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
             ),
             onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(
+            leading: const Icon(Icons.info_outline_rounded),
+            horizontalTitleGap: 1.0,
             title: const Text(
               'About App',
               style: TextStyle(
                 fontSize: 20.0,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
             ),
             onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(
+            leading: const Icon(Icons.logout_rounded),
+            horizontalTitleGap: 1.0,
             title: const Text(
               'Logout',
               style: TextStyle(
                 fontSize: 20.0,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
             ),
             onTap: () => {
@@ -137,6 +184,7 @@ class LogedOutDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      backgroundColor: secondaryColor,
       child: Column(
         children: <Widget>[
           // const DrawerHeader(
@@ -157,6 +205,7 @@ class LogedOutDrawer extends StatelessWidget {
             height: 30,
           ),
           ListTile(
+            //leading: Icon(Icons.login_rounded),
             title: GradientText(
               'Sign In',
               style: const TextStyle(
@@ -164,31 +213,37 @@ class LogedOutDrawer extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
               colors: const [
-                Color.fromARGB(255, 57, 14, 177),
-                Color.fromARGB(255, 214, 9, 9),
+                Color.fromARGB(255, 121, 73, 255),
+                Color.fromARGB(255, 255, 69, 69),
                 Color.fromARGB(255, 214, 9, 9),
               ],
             ),
             onTap: () => {
-              Navigator.of(context).pushNamed('/auth-screen'),
+              Navigator.of(context).pushNamed('/signin-screen'),
             },
           ),
+          const Divider(color: Colors.grey),
+
           ListTile(
+            leading: Icon(Icons.feedback_outlined),
+            horizontalTitleGap: 1.0,
             title: const Text(
               'Submit Feedback',
               style: TextStyle(
                 fontSize: 20.0,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
             ),
             onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(
+            leading: const Icon(Icons.info_outline_rounded),
+            horizontalTitleGap: 1.0,
             title: const Text(
               'About App',
               style: TextStyle(
                 fontSize: 20.0,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
             ),
             onTap: () => {Navigator.of(context).pop()},
