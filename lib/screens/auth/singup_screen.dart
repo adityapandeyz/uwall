@@ -1,8 +1,11 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uwall/utils/colors.dart';
@@ -23,19 +26,21 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignUpWidgetState extends State<SignupScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   final formKey = GlobalKey<FormState>();
-  final usernameController = TextEditingController();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   File? imagefile;
   String? imageUrl;
 
   @override
   void dispose() {
-    usernameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
 
     super.dispose();
   }
@@ -47,35 +52,52 @@ class _SignUpWidgetState extends State<SignupScreen> {
         return AlertDialog(
           backgroundColor: secondaryColor,
           title: const Text("Please choose an option"),
-          content: Row(
+          content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                height: 80,
-                width: 80,
-                decoration: BoxDecoration(
-                  color: Colors.grey,
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.image_rounded,
-                  size: 40,
-                ),
-              ),
-              const SizedBox(width: 20),
-              Container(
-                height: 80,
-                width: 80,
-                decoration: BoxDecoration(
-                  color: Colors.grey,
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.camera_alt_rounded,
-                  size: 40,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InkWell(
+                    onTap: (() {
+                      _getFromGallery();
+                    }),
+                    child: Container(
+                      height: 80,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.image_rounded,
+                        size: 40,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  InkWell(
+                    onTap: (() {
+                      _getFromCamera();
+                    }),
+                    child: Container(
+                      height: 80,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.camera_alt_rounded,
+                        size: 40,
+                      ),
+                    ),
+                  ),
+                ],
               )
             ],
           ),
@@ -125,18 +147,6 @@ class _SignUpWidgetState extends State<SignupScreen> {
               children: [
                 Column(
                   children: [
-                    // GestureDetector(
-                    //   onTap: () {
-                    //     _showImageDialoge();
-                    //   },
-                    //   child: CircleAvatar(
-                    //     radius: 90,
-                    //     child: imagefile == null
-                    //         ? Icon(icons.)
-                    //         : Image.file(imagefile!).image,
-                    //   ),
-
-                    // ),
                     Stack(
                       children: [
                         imagefile != null
@@ -169,8 +179,8 @@ class _SignUpWidgetState extends State<SignupScreen> {
                     ),
                     const SizedBox(height: 20),
                     CustomTextField(
-                      controller: usernameController,
-                      hintText: 'Username',
+                      controller: _nameController,
+                      hintText: 'Name',
                       obsecureText: false,
                       customTextFieldValidator: (value) =>
                           value != null && value.length < 2
@@ -179,7 +189,7 @@ class _SignUpWidgetState extends State<SignupScreen> {
                     ),
                     const SizedBox(height: 10),
                     CustomTextField(
-                      controller: emailController,
+                      controller: _emailController,
                       hintText: 'Email',
                       obsecureText: false,
                       customTextFieldValidator: (email) =>
@@ -189,7 +199,7 @@ class _SignUpWidgetState extends State<SignupScreen> {
                     ),
                     const SizedBox(height: 10),
                     CustomTextField(
-                      controller: passwordController,
+                      controller: _passwordController,
                       hintText: 'Password',
                       obsecureText: true,
                       customTextFieldValidator: (value) =>
@@ -225,20 +235,41 @@ class _SignUpWidgetState extends State<SignupScreen> {
         child: CircularProgressIndicator(),
       ),
     );
-
+    if (imagefile == null) {
+      Fluttertoast.showToast(msg: "Please select an Image");
+      return;
+    }
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
-      await FirebaseAuth.instance.currentUser!.updateDisplayName(
-        usernameController.text.trim(),
-      );
-    } on FirebaseAuthException catch (e) {
-      // ignore: avoid_print
-      print(e);
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child("userImages")
+          .child('${DateTime.now()}.jpg');
 
-      //Utils.showSnackBar(e.message);
+      await ref.putFile(imagefile!);
+
+      imageUrl = await ref.getDownloadURL();
+
+      await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text.trim().toString(),
+        password: _passwordController.text.trim(),
+      );
+
+      final User? user = _auth.currentUser;
+      final uid = user!.uid;
+
+      FirebaseFirestore.instance.collection('users').doc(uid).set({
+        "id": uid,
+        "userImage": imageUrl,
+        "name": _nameController.text,
+        "email": _emailController.text,
+        "createdAt": Timestamp.now(),
+      });
+
+      Navigator.canPop(context) ? Navigator.pop(context) : null;
+    } catch (error) {
+      Fluttertoast.showToast(
+        msg: error.toString(),
+      );
     }
 
     //Navigator.of(context) not working!

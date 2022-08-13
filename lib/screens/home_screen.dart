@@ -13,6 +13,14 @@ class HomeScreen extends StatelessWidget {
       drawer: const SideDrawer(),
       appBar: AppBar(
         title: const Text('uwall'),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.search_rounded,
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
