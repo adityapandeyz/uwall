@@ -1,7 +1,11 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_awesome_select/flutter_awesome_select.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uwall/utils/colors.dart';
@@ -25,6 +29,7 @@ class _UploadScreenState extends State<UploadScreen> {
   String? imageUrl;
   String? myImage;
   String? myName;
+  String _category = '';
 
   final controllerTitle = TextEditingController();
   final controllerComment = TextEditingController();
@@ -72,6 +77,13 @@ class _UploadScreenState extends State<UploadScreen> {
     );
   }
 
+  @override
+  void dispose() {
+    controllerTitle.dispose();
+    controllerComment.dispose();
+    super.dispose();
+  }
+
   void _getFromGallery() async {
     XFile? pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -90,11 +102,97 @@ class _UploadScreenState extends State<UploadScreen> {
     }
   }
 
+  List<S2Choice<String>> days = [
+    S2Choice<String>(value: '3d', title: '3D'),
+    S2Choice<String>(value: 'abstract', title: 'Abstract'),
+    S2Choice<String>(value: 'animals', title: 'Animals'),
+    S2Choice<String>(value: 'anime', title: 'Anime'),
+    S2Choice<String>(value: 'art', title: 'Art'),
+    S2Choice<String>(value: 'cars', title: 'Cars'),
+    S2Choice<String>(value: 'city', title: 'City'),
+    S2Choice<String>(value: 'dark', title: 'Dark'),
+    S2Choice<String>(value: 'fantasy', title: 'Fantasy'),
+    S2Choice<String>(value: 'flowers', title: 'Flowers'),
+    S2Choice<String>(value: 'food', title: 'Food'),
+    S2Choice<String>(value: 'games', title: 'Games'),
+    S2Choice<String>(value: 'nature', title: 'Nature'),
+    S2Choice<String>(value: 'others', title: 'Others'),
+    S2Choice<String>(value: 'sports', title: 'Sports'),
+    S2Choice<String>(value: 'technology', title: 'Technology'),
+    S2Choice<String>(value: 'textures', title: 'Textures'),
+    S2Choice<String>(value: 'vectore', title: 'Vector'),
+    S2Choice<String>(value: 'words', title: 'Words'),
+  ];
+
+  void read_userInfo() async {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then<dynamic>(
+      (DocumentSnapshot snapshot) async {
+        myImage = snapshot.get('userImage');
+        myName = snapshot.get('name');
+      },
+    );
+  }
+
   @override
-  void dispose() {
-    controllerTitle.dispose();
-    controllerComment.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    read_userInfo();
+  }
+
+  void _upload_image() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+    if (imagefile == null) {
+      Fluttertoast.showToast(msg: 'Please Select an Image');
+      Navigator.canPop(context) ? Navigator.pop(context) : null;
+      return;
+    } else if (_category != null) {
+      Fluttertoast.showToast(msg: 'Please choose the category');
+      Navigator.canPop(context) ? Navigator.pop(context) : null;
+      return;
+    }
+    try {
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child("userImages")
+          .child("${DateTime.now()}.jpg");
+
+      await ref.putFile(imagefile!);
+
+      imageUrl = await ref.getDownloadURL();
+
+      FirebaseFirestore.instance
+          .collection("wallpaper")
+          .doc(DateTime.now().toString())
+          .set(
+        {
+          'id': _auth.currentUser!.uid,
+          'userImage': myImage.toString(),
+          'userName': myName.toString(),
+          'email': _auth.currentUser!.email,
+          'title': controllerTitle.toString(),
+          'Image': imageUrl,
+          'Category': _category.toString(),
+          'downloads': 0,
+          'createdAt': DateTime.now().toString(),
+        },
+      );
+      Fluttertoast.showToast(msg: 'Wallpaper uploaded successfully');
+      Navigator.canPop(context) ? Navigator.pop(context) : null;
+      imagefile = null;
+    } catch (error) {
+      Fluttertoast.showToast(msg: error.toString());
+      Navigator.canPop(context) ? Navigator.pop(context) : null;
+    }
   }
 
   @override
@@ -116,10 +214,13 @@ class _UploadScreenState extends State<UploadScreen> {
                   obsecureText: false,
                 ),
                 const SizedBox(height: 10),
-                CustomTextField(
-                  controller: controllerComment,
-                  hintText: 'Comment',
-                  obsecureText: false,
+                SmartSelect<String>.single(
+                  title: 'Category',
+                  selectedValue: _category,
+                  choiceItems: days,
+                  onChange: (selected) => setState(
+                    () => _category = selected.value,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Center(
@@ -163,13 +264,7 @@ class _UploadScreenState extends State<UploadScreen> {
                 CustomButton(
                   text: 'Upload',
                   onTap: () {
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
+                    _upload_image();
                   },
                 )
               ],

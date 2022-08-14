@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:uwall/screens/category_screen.dart';
 import 'package:uwall/screens/home_screen.dart';
 import 'package:uwall/screens/upload_screen.dart';
 
 import 'screens/auth/signin_screen.dart';
-import 'screens/auth/singup_screen.dart';
+import 'screens/auth/signup_screen.dart';
+import 'screens/download_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings routeSettings) {
   switch (routeSettings.name) {
@@ -19,16 +20,31 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         settings: routeSettings,
         builder: (_) => const SignupScreen(),
       );
+
     case HomeScreen.routeName:
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => const HomeScreen(),
       );
+
     case UploadScreen.routeName:
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => const UploadScreen(),
       );
+
+    case CategoryScreen.routeName:
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => const CategoryScreen(),
+      );
+
+    case DownloadScreen.routeName:
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => const DownloadScreen(),
+      );
+
     // case HomeScreen.routeName:
     //   return PageTransition(
     //     child: const HomeScreen(),
@@ -52,17 +68,15 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
               'Error',
             ),
           ),
-          body: Center(
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 255, 255, 255),
-              ),
-              child: const Text(
-                'Error 404',
-                style: TextStyle(
-                  color: Color.fromARGB(255, 0, 0, 0),
-                  fontSize: 24,
-                ),
+          body: Container(
+            decoration: const BoxDecoration(
+              color: Color.fromARGB(255, 255, 255, 255),
+            ),
+            child: const Text(
+              'Error 404',
+              style: TextStyle(
+                color: Color.fromARGB(255, 0, 0, 0),
+                fontSize: 24,
               ),
             ),
           ),

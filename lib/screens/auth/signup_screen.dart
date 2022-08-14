@@ -267,9 +267,8 @@ class _SignUpWidgetState extends State<SignupScreen> {
 
       Navigator.canPop(context) ? Navigator.pop(context) : null;
     } catch (error) {
-      Fluttertoast.showToast(
-        msg: error.toString(),
-      );
+      Fluttertoast.showToast(msg: error.toString());
+      Navigator.pop(context);
     }
 
     //Navigator.of(context) not working!

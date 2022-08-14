@@ -143,6 +143,7 @@ class _LogedInDrawerState extends State<LogedInDrawer> {
             },
           ),
           const Divider(color: Colors.grey),
+
           ListTile(
             leading: const Icon(
               Icons.search_rounded,
@@ -166,13 +167,15 @@ class _LogedInDrawerState extends State<LogedInDrawer> {
               size: 20,
             ),
             title: const Text(
-              'Categories',
+              'Category',
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {
+              Navigator.of(context).pushNamed('/category-screen'),
+            },
           ),
           ListTile(
             dense: true,
@@ -342,12 +345,62 @@ class LogedOutDrawer extends StatelessWidget {
           const Divider(color: Colors.grey),
 
           ListTile(
+            leading: const Icon(
+              Icons.search_rounded,
+              size: 20,
+            ),
+            horizontalTitleGap: 1.0,
+            title: const Text(
+              'Search',
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            onTap: () => {Navigator.of(context).pop()},
+          ),
+          ListTile(
             dense: true,
+            horizontalTitleGap: 1.0,
+            leading: const Icon(
+              Icons.category_outlined,
+              size: 20,
+            ),
+            title: const Text(
+              'Category',
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            onTap: () => {
+              Navigator.of(context).pushNamed('/category-screen'),
+            },
+          ),
+          ListTile(
+            dense: true,
+            horizontalTitleGap: 1.0,
+            leading: const Icon(
+              Icons.save_alt_rounded,
+              size: 20,
+            ),
+            title: const Text(
+              'Saved',
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            onTap: () => {Navigator.of(context).pop()},
+          ),
+
+          ListTile(
+            dense: true,
+            horizontalTitleGap: 1.0,
             leading: const Icon(
               Icons.feedback_outlined,
               size: 20,
             ),
-            horizontalTitleGap: 1.0,
             title: const Text(
               'Submit Feedback',
               style: TextStyle(
@@ -359,11 +412,11 @@ class LogedOutDrawer extends StatelessWidget {
           ),
           ListTile(
             dense: true,
+            horizontalTitleGap: 1.0,
             leading: const Icon(
               Icons.info_outline_rounded,
               size: 20,
             ),
-            horizontalTitleGap: 1.0,
             title: const Text(
               'About App',
               style: TextStyle(

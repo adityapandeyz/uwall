@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:uwall/utils/colors.dart';
 import 'package:uwall/widgets/custom_button.dart';
@@ -136,9 +137,9 @@ class _SigninScreenState extends State<SigninScreen> {
         password: passwordController.text.trim(),
       );
       navigatorKey.currentState!.popUntil((route) => route.isFirst);
-    } on FirebaseAuthException catch (e) {
-      // ignore: avoid_print
-      print(e);
+    } on FirebaseAuthException catch (error) {
+      Fluttertoast.showToast(msg: error.toString());
+      Navigator.pop(context);
 
       //  Utils.showSnackBar(e.message);
     }
