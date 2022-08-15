@@ -52,6 +52,8 @@ dependencies:
   cached_network_image: ^3.2.1
   glassmorphism_ui: ^0.3.0
   parallax_animation: ^0.0.3
+  carousel_slider: ^4.1.1
+  url_launcher: ^6.1.5
 
 dev_dependencies:
   flutter_lints: ^2.0.0

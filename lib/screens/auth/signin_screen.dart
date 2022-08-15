@@ -79,11 +79,7 @@ class _SigninScreenState extends State<SigninScreen> {
                         fontWeight: FontWeight.bold),
                   ),
                   onTap: () {
-                    // Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                    //     builder: ((context) => const ForgotPasswordPage()),
-                    //   ),
-                    // );
+                    Navigator.of(context).pushNamed('/forgot-password-screen');
                   },
                 ),
                 const SizedBox(height: 16),

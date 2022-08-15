@@ -58,7 +58,14 @@ class HomeScreen extends StatelessWidget {
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                         onTap: (() {
-                          Navigator.of(context).pushNamed('/download-screen');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => DownloadScreen(
+                                  clickedImageId: snapshot.data!.docs[index]
+                                      ['createdAt']),
+                            ),
+                          );
                         }),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),

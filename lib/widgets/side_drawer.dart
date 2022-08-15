@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
@@ -95,6 +96,14 @@ class _LogedInDrawerState extends State<LogedInDrawer> {
           image != null
               ? CircleAvatar(
                   radius: 20,
+                  // child: CachedNetworkImage(
+                  //   imageUrl: image!,
+                  //   placeholder: (context, url) => Container(
+                  //     color: const Color(0xfff5f8fd),
+                  //   ),
+                  //   fit: BoxFit.cover,
+                  // ),
+
                   backgroundImage: NetworkImage(image!),
                 )
               : const CircleAvatar(
@@ -262,7 +271,7 @@ class _LogedInDrawerState extends State<LogedInDrawer> {
               ),
             ),
             onTap: () => {
-              Navigator.of(context).pop(),
+              Navigator.of(context).pushNamed('/privacy-policy-screen'),
             },
           ),
           ListTile(
@@ -441,7 +450,7 @@ class LogedOutDrawer extends StatelessWidget {
               ),
             ),
             onTap: () => {
-              Navigator.of(context).pop(),
+              Navigator.of(context).pushNamed('/privacy-policy-screen'),
             },
           ),
           ListTile(

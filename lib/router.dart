@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:uwall/screens/category_screen.dart';
 import 'package:uwall/screens/home_screen.dart';
+import 'package:uwall/screens/privacy_policy_screen.dart';
 import 'package:uwall/screens/upload_screen.dart';
 
+import 'screens/auth/forgot_password_screen.dart';
 import 'screens/auth/signin_screen.dart';
 import 'screens/auth/signup_screen.dart';
 import 'screens/download_screen.dart';
@@ -19,6 +21,12 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => const SignupScreen(),
+      );
+
+    case ForgotPasswordScreen.routeName:
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => const ForgotPasswordScreen(),
       );
 
     case HomeScreen.routeName:
@@ -38,12 +46,17 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         settings: routeSettings,
         builder: (_) => const CategoryScreen(),
       );
-
-    case DownloadScreen.routeName:
+    case PrivacyPolicyScreen.routeName:
       return MaterialPageRoute(
         settings: routeSettings,
-        builder: (_) => const DownloadScreen(),
+        builder: (_) => const PrivacyPolicyScreen(),
       );
+
+    // case DownloadScreen.routeName:
+    //   return MaterialPageRoute(
+    //     settings: routeSettings,
+    //     builder: (_) => DownloadScreen(),
+    //   );
 
     // case HomeScreen.routeName:
     //   return PageTransition(

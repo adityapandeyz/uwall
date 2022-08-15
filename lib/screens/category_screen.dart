@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:parallax_animation/parallax_animation.dart';
+import 'package:uwall/screens/download_screen.dart';
 
 class PhotoItem {
   final String image;
@@ -125,12 +126,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
               child: ParallaxWidget(
                 overflowWidthFactor: 1,
                 overflowHeightFactor: 3,
-                background: SizedBox(
-                  // height: 200,
-                  child: Image.network(
-                    _items[index].image,
-                    fit: BoxFit.cover,
+                background: CachedNetworkImage(
+                  imageUrl: _items[index].image,
+                  placeholder: (context, url) => Container(
+                    color: const Color(0xfff5f8fd),
                   ),
+                  fit: BoxFit.cover,
                 ),
                 child: Center(
                   child: Padding(
@@ -282,72 +283,87 @@ class CategoryView extends StatelessWidget {
       appBar: AppBar(
         title: Text(heading),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('wallpaper')
-            .where("Category", isEqualTo: value.toString())
-            // .orderBy('createdAt', descending: true)
-            .snapshots(),
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.connectionState == ConnectionState.active) {
-            if (!snapshot.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            return GridView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: snapshot.data!.docs.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
-                crossAxisCount: 3,
-                mainAxisExtent: 150,
-              ),
-              itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
-                  onTap: (() {
-                    Navigator.of(context).pushNamed('/download-screen');
-                  }),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: CachedNetworkImage(
-                      imageUrl: snapshot.data!.docs[index]['Image'],
-                      placeholder: (context, url) => Container(
-                        color: const Color(0xfff5f8fd),
+      body: Column(
+        children: [
+          Container(
+            width: 50,
+            decoration: BoxDecoration(),
+          ),
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('wallpaper')
+                .where("Category", isEqualTo: value.toString())
+                // .orderBy('createdAt', descending: true)
+                .snapshots(),
+            builder: (context, AsyncSnapshot snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.connectionState == ConnectionState.active) {
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: snapshot.data!.docs.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
+                    crossAxisCount: 3,
+                    mainAxisExtent: 150,
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    return GestureDetector(
+                      onTap: (() {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => DownloadScreen(
+                                clickedImageId: snapshot.data!.docs[index]
+                                    ['createdAt']),
+                          ),
+                        );
+                      }),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: CachedNetworkImage(
+                          imageUrl: snapshot.data!.docs[index]['Image'],
+                          placeholder: (context, url) => Container(
+                            color: const Color(0xfff5f8fd),
+                          ),
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                      fit: BoxFit.cover,
+                    );
+                  },
+                );
+              } else {
+                return const Center(
+                  child: Text(
+                    'There is no tasks',
+                    style: TextStyle(
+                      fontSize: 20,
                     ),
                   ),
                 );
-              },
-            );
-          } else {
-            return const Center(
-              child: Text(
-                'There is no tasks',
-                style: TextStyle(
-                  fontSize: 20,
-                ),
-              ),
-            );
-          }
+              }
 
-          return const Center(
-            child: Text(
-              'Something went wrong!',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
-              ),
-            ),
-          );
-        },
+              return const Center(
+                child: Text(
+                  'Something went wrong!',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
