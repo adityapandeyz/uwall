@@ -36,7 +36,6 @@ dependencies:
   firebase_storage: ^10.3.2
   flutter:
     sdk: flutter
-  flutter_image_slideshow: ^0.1.2
   fluttertoast: ^8.0.9
   google_fonts: ^3.0.1
   image_cropper: ^2.0.3
@@ -50,10 +49,10 @@ dependencies:
   uuid: ^3.0.6
   flutter_awesome_select: ^6.5.0
   cached_network_image: ^3.2.1
-  glassmorphism_ui: ^0.3.0
+  url_launcher: ^6.1.5
+  flutter_launcher_icons: ^0.10.0
   parallax_animation: ^0.0.3
   carousel_slider: ^4.1.1
-  url_launcher: ^6.1.5
 
 dev_dependencies:
   flutter_lints: ^2.0.0
@@ -73,6 +72,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/logo/uwall_logo_512px.png
+    - assets/logo/dot.-150x150.png
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -97,3 +97,14 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/logo/uwall_logo_512px.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/logo/uwall_logo_512px.png"
+    background_color: "#000000"
+    theme_color: "#000000"

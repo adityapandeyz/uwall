@@ -77,13 +77,6 @@ class _UploadScreenState extends State<UploadScreen> {
     );
   }
 
-  @override
-  void dispose() {
-    controllerTitle.dispose();
-    controllerComment.dispose();
-    super.dispose();
-  }
-
   void _getFromGallery() async {
     XFile? pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -112,11 +105,11 @@ class _UploadScreenState extends State<UploadScreen> {
     S2Choice<String>(value: 'city', title: 'City'),
     S2Choice<String>(value: 'dark', title: 'Dark'),
     S2Choice<String>(value: 'fantasy', title: 'Fantasy'),
-    S2Choice<String>(value: 'flowers', title: 'Flowers'),
-    S2Choice<String>(value: 'food', title: 'Food'),
     S2Choice<String>(value: 'games', title: 'Games'),
+    S2Choice<String>(value: 'movies', title: 'Movies'),
     S2Choice<String>(value: 'nature', title: 'Nature'),
     S2Choice<String>(value: 'others', title: 'Others'),
+    S2Choice<String>(value: 'space', title: 'Space'),
     S2Choice<String>(value: 'sports', title: 'Sports'),
     S2Choice<String>(value: 'technology', title: 'Technology'),
     S2Choice<String>(value: 'textures', title: 'Textures'),
@@ -155,7 +148,7 @@ class _UploadScreenState extends State<UploadScreen> {
       Fluttertoast.showToast(msg: 'Please Select an Image');
       Navigator.canPop(context) ? Navigator.pop(context) : null;
       return;
-    } else if (_category != null) {
+    } else if (_category == null) {
       Fluttertoast.showToast(msg: 'Please choose the category');
       Navigator.canPop(context) ? Navigator.pop(context) : null;
       return;
@@ -177,13 +170,13 @@ class _UploadScreenState extends State<UploadScreen> {
         {
           'id': _auth.currentUser!.uid,
           'userImage': myImage.toString(),
-          'userName': myName.toString(),
+          'userName': myName,
           'email': _auth.currentUser!.email,
           'title': controllerTitle.toString(),
           'Image': imageUrl,
           'Category': _category.toString(),
           'downloads': 0,
-          'createdAt': DateTime.now().toString(),
+          'createdAt': DateTime.now(),
         },
       );
       Fluttertoast.showToast(msg: 'Wallpaper uploaded successfully');
@@ -193,6 +186,13 @@ class _UploadScreenState extends State<UploadScreen> {
       Fluttertoast.showToast(msg: error.toString());
       Navigator.canPop(context) ? Navigator.pop(context) : null;
     }
+  }
+
+  @override
+  void dispose() {
+    controllerTitle.dispose();
+    controllerComment.dispose();
+    super.dispose();
   }
 
   @override

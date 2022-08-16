@@ -2,6 +2,7 @@ import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:uwall/router.dart';
 import 'package:uwall/screens/home_screen.dart';
@@ -27,6 +28,11 @@ void main() async {
     await Firebase.initializeApp();
   }
   runApp(const MyApp());
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      systemNavigationBarColor: Color.fromARGB(255, 0, 0, 0),
+    ),
+  );
 }
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -37,11 +43,29 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
     return MaterialApp(
       title: 'uwall',
       navigatorKey: navigatorKey,
-      theme: ThemeData.dark().copyWith(
-        textTheme: GoogleFonts.quicksandTextTheme(
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primarySwatch: Colors.grey,
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+        listTileTheme: const ListTileThemeData(
+          iconColor: Colors.white,
+        ),
+        hintColor: Colors.white,
+        radioTheme: RadioThemeData(
+          fillColor: MaterialStateColor.resolveWith(
+            (states) => Colors.white,
+          ),
+        ),
+        hoverColor: primaryColor,
+        indicatorColor: primaryColor,
+        textTheme: GoogleFonts.sourceSansProTextTheme(
           Theme.of(context).textTheme.apply(
                 bodyColor: Colors.white,
               ),
@@ -49,6 +73,13 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: backgroundColor,
         appBarTheme: const AppBarTheme(
           color: backgroundColor,
+          iconTheme: IconThemeData(
+            color: Colors.white,
+          ),
+          titleTextStyle: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       onGenerateRoute: (settings) => generateRoute(settings),

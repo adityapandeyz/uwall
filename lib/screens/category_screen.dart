@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:parallax_animation/parallax_animation.dart';
 import 'package:uwall/screens/download_screen.dart';
@@ -27,74 +26,99 @@ class CategoryScreen extends StatefulWidget {
 
 final List<PhotoItem> _items = [
   PhotoItem(
-    "https://images.pexels.com/photos/1772973/pexels-photo-1772973.png?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-    "Games",
-    "games",
+    "https://images.wallpaperscraft.com/image/single/cosmic_explosion_bright_lines_137382_1280x720.jpg",
+    "3D",
+    "3d",
   ),
   PhotoItem(
-    "https://images.pexels.com/photos/1758531/pexels-photo-1758531.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+    "https://images.wallpaperscraft.com/image/single/flight_balloon_sky_86980_1280x720.jpg",
+    "Abstract",
+    "abstract",
+  ),
+  PhotoItem(
+    "https://images.wallpaperscraft.com/image/single/wolf_predator_howl_134450_1280x720.jpg",
+    "Animals",
+    "animals",
+  ),
+  PhotoItem(
+    "https://c4.wallpaperflare.com/wallpaper/588/409/90/demon-slayer-kimetsu-no-yaiba-kimetsu-no-yaiba-tanjirou-kamado-hd-wallpaper-preview.jpg",
     "Anime",
     "anime",
   ),
   PhotoItem(
-    "https://images.pexels.com/photos/1772973/pexels-photo-1772973.png?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+    "https://c4.wallpaperflare.com/wallpaper/133/969/139/artwork-nature-landscape-fantasy-art-wallpaper-preview.jpg",
+    "Art",
+    "art",
+  ),
+  PhotoItem(
+    "https://c4.wallpaperflare.com/wallpaper/840/954/346/dark-night-rain-car-wallpaper-preview.jpg",
+    "Cars",
+    "cars",
+  ),
+  PhotoItem(
+    "https://images.unsplash.com/photo-1444723121867-7a241cacace9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+    "City",
+    "city",
+  ),
+  PhotoItem(
+    "https://images.wallpaperscraft.com/image/single/monster_silhouette_forest_131112_1280x720.jpg",
+    "Dark",
+    "dark",
+  ),
+  PhotoItem(
+    "https://c4.wallpaperflare.com/wallpaper/328/266/395/wlop-artwork-women-digital-art-wallpaper-preview.jpg",
+    "Fantasy",
+    "fantasy",
+  ),
+  PhotoItem(
+    "https://c4.wallpaperflare.com/wallpaper/943/63/773/cyberpunk-2077-cyberpunk-video-games-wallpaper-preview.jpg",
     "Games",
     "games",
   ),
   PhotoItem(
-    "https://images.pexels.com/photos/1758531/pexels-photo-1758531.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-    "Anime",
-    "anime",
+    "https://c4.wallpaperflare.com/wallpaper/221/116/854/joaquin-phoenix-joker-batman-fire-car-hd-wallpaper-preview.jpg",
+    "Movies",
+    "movies",
   ),
   PhotoItem(
-    "https://images.pexels.com/photos/1772973/pexels-photo-1772973.png?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-    "Games",
-    "games",
+    "https://c4.wallpaperflare.com/wallpaper/919/575/783/nature-landscape-lake-mountains-wallpaper-preview.jpg",
+    "Nature",
+    "nature",
   ),
   PhotoItem(
-    "https://images.pexels.com/photos/1758531/pexels-photo-1758531.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-    "Anime",
-    "anime",
+    "https://images.wallpaperscraft.com/image/single/ball_mirror_green_138712_1280x720.jpg",
+    "Others",
+    "others",
   ),
   PhotoItem(
-    "https://images.pexels.com/photos/1772973/pexels-photo-1772973.png?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-    "Games",
-    "games",
+    "https://c4.wallpaperflare.com/wallpaper/1023/915/631/nasa-space-suit-digital-art-space-wallpaper-preview.jpg",
+    "Space",
+    "space",
   ),
   PhotoItem(
-    "https://images.pexels.com/photos/1758531/pexels-photo-1758531.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-    "Anime",
-    "anime",
+    "https://c4.wallpaperflare.com/wallpaper/16/671/726/lionel-messi-football-barcelona-hd-wallpaper-preview.jpg",
+    "Sports",
+    "sports",
   ),
   PhotoItem(
-    "https://images.pexels.com/photos/1772973/pexels-photo-1772973.png?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-    "Games",
-    "games",
+    "https://c4.wallpaperflare.com/wallpaper/857/457/204/iron-man-artwork-comic-books-superhero-wallpaper-preview.jpg",
+    "Technology",
+    "technology",
   ),
   PhotoItem(
-    "https://images.pexels.com/photos/1758531/pexels-photo-1758531.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-    "Anime",
-    "anime",
+    "https://images.wallpaperscraft.com/image/single/wood_surface_texture_wet_119316_1280x720.jpg",
+    "Textures",
+    "textures",
   ),
   PhotoItem(
-    "https://images.pexels.com/photos/1772973/pexels-photo-1772973.png?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-    "Games",
-    "games",
+    "https://images.wallpaperscraft.com/image/single/astronaut_spacesuit_reflection_144426_1280x720.jpg",
+    "Vectors",
+    "vectors",
   ),
   PhotoItem(
-    "https://images.pexels.com/photos/1758531/pexels-photo-1758531.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-    "Anime",
-    "anime",
-  ),
-  PhotoItem(
-    "https://images.pexels.com/photos/1772973/pexels-photo-1772973.png?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-    "Games",
-    "games",
-  ),
-  PhotoItem(
-    "https://images.pexels.com/photos/1758531/pexels-photo-1758531.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-    "Anime",
-    "anime",
+    "https://images.wallpaperscraft.com/image/single/neon_backlight_inscription_121706_1280x720.jpg",
+    "Words",
+    "words",
   ),
 ];
 
@@ -283,87 +307,80 @@ class CategoryView extends StatelessWidget {
       appBar: AppBar(
         title: Text(heading),
       ),
-      body: Column(
-        children: [
-          Container(
-            width: 50,
-            decoration: BoxDecoration(),
-          ),
-          StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('wallpaper')
-                .where("Category", isEqualTo: value.toString())
-                // .orderBy('createdAt', descending: true)
-                .snapshots(),
-            builder: (context, AsyncSnapshot snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.connectionState == ConnectionState.active) {
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                return GridView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: snapshot.data!.docs.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisSpacing: 5,
-                    mainAxisSpacing: 5,
-                    crossAxisCount: 3,
-                    mainAxisExtent: 150,
-                  ),
-                  itemBuilder: (BuildContext context, int index) {
-                    return GestureDetector(
-                      onTap: (() {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => DownloadScreen(
-                                clickedImageId: snapshot.data!.docs[index]
-                                    ['createdAt']),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Column(
+            children: [
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('wallpaper')
+                    .where("Category", isEqualTo: value.toString())
+                    // .orderBy('createdAt', descending: true)
+                    .snapshots(),
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.connectionState ==
+                      ConnectionState.active) {
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.docs.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisSpacing: 5,
+                        mainAxisSpacing: 5,
+                        crossAxisCount: 3,
+                        mainAxisExtent: 250,
+                      ),
+                      itemBuilder: (BuildContext context, int index) {
+                        return GestureDetector(
+                          onTap: (() {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => DownloadScreen(
+                                    clickedImageId: snapshot.data!.docs[index]
+                                        ['createdAt']),
+                              ),
+                            );
+                          }),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: CachedNetworkImage(
+                              imageUrl: snapshot.data!.docs[index]['Image'],
+                              placeholder: (context, url) => Container(
+                                color: const Color(0xfff5f8fd),
+                              ),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         );
-                      }),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: CachedNetworkImage(
-                          imageUrl: snapshot.data!.docs[index]['Image'],
-                          placeholder: (context, url) => Container(
-                            color: const Color(0xfff5f8fd),
-                          ),
-                          fit: BoxFit.cover,
+                      },
+                    );
+                  } else {
+                    return const Center(
+                      child: Text(
+                        'There is no tasks',
+                        style: TextStyle(
+                          fontSize: 20,
                         ),
                       ),
                     );
-                  },
-                );
-              } else {
-                return const Center(
-                  child: Text(
-                    'There is no tasks',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                );
-              }
-
-              return const Center(
-                child: Text(
-                  'Something went wrong!',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30,
-                  ),
-                ),
-              );
-            },
+                  }
+                },
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

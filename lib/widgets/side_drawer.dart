@@ -126,7 +126,9 @@ class _LogedInDrawerState extends State<LogedInDrawer> {
               ),
               textAlign: TextAlign.center,
             ),
-            onTap: () => {},
+            onTap: () => {
+              Navigator.of(context).pushNamed('/profile-screen'),
+            },
           ),
 
           const Divider(color: Colors.grey),
@@ -166,7 +168,9 @@ class _LogedInDrawerState extends State<LogedInDrawer> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {
+              Navigator.of(context).pushNamed('/search-screen'),
+            },
           ),
           ListTile(
             dense: true,
@@ -217,7 +221,9 @@ class _LogedInDrawerState extends State<LogedInDrawer> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {
+              Navigator.of(context).pushNamed('/submit-feedback-screen'),
+            },
           ),
           ListTile(
             dense: true,
@@ -233,7 +239,9 @@ class _LogedInDrawerState extends State<LogedInDrawer> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {
+              Navigator.of(context).pushNamed('/about-app-screen'),
+            },
           ),
           ListTile(
             dense: true,
@@ -286,7 +294,7 @@ class _LogedInDrawerState extends State<LogedInDrawer> {
               ),
             ),
             onTap: () => {
-              Navigator.of(context).pop(),
+              Navigator.of(context).pushNamed('/terms-and-conditions-screen'),
             },
           ),
           const Spacer(
@@ -366,7 +374,9 @@ class LogedOutDrawer extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {
+              Navigator.of(context).pushNamed('/search-screen'),
+            },
           ),
           ListTile(
             dense: true,
@@ -417,7 +427,9 @@ class LogedOutDrawer extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {
+              Navigator.of(context).pushNamed('/submit-feedback-screen'),
+            },
           ),
           ListTile(
             dense: true,
@@ -433,7 +445,9 @@ class LogedOutDrawer extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {
+              Navigator.of(context).pushNamed('/about-app-screen'),
+            },
           ),
 
           const SizedBox(height: 40),
@@ -465,7 +479,7 @@ class LogedOutDrawer extends StatelessWidget {
               ),
             ),
             onTap: () => {
-              Navigator.of(context).pop(),
+              Navigator.of(context).pushNamed('/terms-and-conditions-screen'),
             },
           ),
           const Spacer(

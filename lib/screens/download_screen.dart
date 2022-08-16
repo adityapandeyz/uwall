@@ -96,16 +96,6 @@ class DownloadScreen extends StatelessWidget {
                   ),
                 );
               }
-
-              return const Center(
-                child: Text(
-                  'Something went wrong!',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30,
-                  ),
-                ),
-              );
             },
           ),
           // Container(
