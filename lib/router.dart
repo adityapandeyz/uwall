@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:uwall/screens/about_app_screen.dart';
+import 'package:uwall/screens/auth/verify_email_screen.dart';
 import 'package:uwall/screens/category_screen.dart';
 import 'package:uwall/screens/home_screen.dart';
 import 'package:uwall/screens/privacy_policy_screen.dart';
-import 'package:uwall/screens/profile_screen.dart';
-import 'package:uwall/screens/search_screen.dart';
+import 'package:uwall/screens/search/search_screen.dart';
 import 'package:uwall/screens/submit_feedback_screen.dart';
 import 'package:uwall/screens/terms_and_conditions_screen.dart';
 import 'package:uwall/screens/upload_screen.dart';
@@ -12,7 +12,6 @@ import 'package:uwall/screens/upload_screen.dart';
 import 'screens/auth/forgot_password_screen.dart';
 import 'screens/auth/signin_screen.dart';
 import 'screens/auth/signup_screen.dart';
-import 'screens/download_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings routeSettings) {
   switch (routeSettings.name) {
@@ -33,6 +32,11 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         settings: routeSettings,
         builder: (_) => const ForgotPasswordScreen(),
       );
+    case VerifyEmailScreen.routeName:
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => const VerifyEmailScreen(),
+      );
 
     case HomeScreen.routeName:
       return MaterialPageRoute(
@@ -40,11 +44,11 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         builder: (_) => const HomeScreen(),
       );
 
-    case ProfileScreen.routeName:
-      return MaterialPageRoute(
-        settings: routeSettings,
-        builder: (_) => const ProfileScreen(),
-      );
+    // case ProfileScreen.routeName:
+    //   return MaterialPageRoute(
+    //     settings: routeSettings,
+    //     builder: (_) => const ProfileScreen(),
+    //   );
 
     case UploadScreen.routeName:
       return MaterialPageRoute(

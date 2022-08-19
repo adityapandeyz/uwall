@@ -78,8 +78,11 @@ class HomeScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (_) => DownloadScreen(
-                                    clickedImageId: snapshot.data!.docs[index]
-                                        ['createdAt']),
+                                  clickedImageId: snapshot.data!.docs[index]
+                                      ['createdAt'],
+                                  downloads: snapshot.data!.docs[index]
+                                      ['downloads'],
+                                ),
                               ),
                             );
                           }),

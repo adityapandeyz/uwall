@@ -5,6 +5,8 @@ import 'package:simple_gradient_text/simple_gradient_text.dart';
 import 'package:uwall/utils/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../screens/profile_screen.dart';
+
 class SideDrawer extends StatelessWidget {
   const SideDrawer({Key? key}) : super(key: key);
 
@@ -42,6 +44,13 @@ class _LogedInDrawerState extends State<LogedInDrawer> {
   String? name = "";
   String? email = "";
   String? image = "";
+  String? id = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _getDataFromDatabase();
+  }
 
   Future _getDataFromDatabase() async {
     await FirebaseFirestore.instance
@@ -56,17 +65,12 @@ class _LogedInDrawerState extends State<LogedInDrawer> {
               name = snapshot.data()!['name'];
               email = snapshot.data()!['email'];
               image = snapshot.data()!['userImage'];
+              id = snapshot.data()!['id'];
             },
           );
         }
       },
     );
-  }
-
-  @override
-  void initState() {
-    _getDataFromDatabase();
-    super.initState();
   }
 
   @override
@@ -127,7 +131,14 @@ class _LogedInDrawerState extends State<LogedInDrawer> {
               textAlign: TextAlign.center,
             ),
             onTap: () => {
-              Navigator.of(context).pushNamed('/profile-screen'),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ProfileScreen(
+                    userId: id!,
+                  ),
+                ),
+              )
             },
           ),
 

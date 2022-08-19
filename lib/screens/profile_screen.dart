@@ -1,6 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'download_screen.dart';
@@ -8,7 +6,12 @@ import 'download_screen.dart';
 class ProfileScreen extends StatefulWidget {
   static const String routeName = '/profile-screen';
 
-  const ProfileScreen({Key? key}) : super(key: key);
+  final String userId;
+
+  const ProfileScreen({
+    Key? key,
+    required this.userId,
+  }) : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -20,10 +23,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? id;
   String? image = "";
 
+  @override
+  void initState() {
+    super.initState();
+    _getDataFromDatabase();
+  }
+
   Future _getDataFromDatabase() async {
     await FirebaseFirestore.instance
         .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(widget.userId)
         .get()
         .then(
       (snapshot) async {
@@ -42,12 +51,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _getDataFromDatabase();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -63,7 +66,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 const SizedBox(height: 30),
                 CircleAvatar(
-                  radius: 40,
+                  radius: 60,
                   backgroundImage: NetworkImage(image!),
                 ),
                 const SizedBox(height: 30),
@@ -97,46 +100,66 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     } else if (snapshot.connectionState ==
                         ConnectionState.active) {
-                      return GridView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: snapshot.data!.docs.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisSpacing: 5,
-                          mainAxisSpacing: 5,
-                          crossAxisCount: 3,
-                          mainAxisExtent: 150,
-                        ),
-                        itemBuilder: (BuildContext context, int index) {
-                          return GestureDetector(
-                            onTap: (() {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => DownloadScreen(
-                                      clickedImageId: snapshot.data!.docs[index]
-                                          ['createdAt']),
+                      if (snapshot.hasData) {
+                        return GridView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: snapshot.data!.docs.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisSpacing: 5,
+                            mainAxisSpacing: 5,
+                            crossAxisCount: 3,
+                            mainAxisExtent: 150,
+                          ),
+                          itemBuilder: (BuildContext context, int index) {
+                            if (snapshot.data!.docs.length != null) {
+                              return GestureDetector(
+                                onTap: (() {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => DownloadScreen(
+                                        clickedImageId: snapshot
+                                            .data!.docs[index]['createdAt'],
+                                        downloads: snapshot.data!.docs[index]
+                                            ['downloads'],
+                                      ),
+                                    ),
+                                  );
+                                }),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    snapshot.data!.docs[index]['Image'],
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               );
-                            }),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: CachedNetworkImage(
-                                imageUrl: snapshot.data!.docs[index]['Image'],
-                                placeholder: (context, url) => Container(
-                                  color: const Color(0xfff5f8fd),
+                            }
+                            return const Center(
+                              child: Text(
+                                'No Posts.',
+                                style: TextStyle(
+                                  fontSize: 20,
                                 ),
-                                fit: BoxFit.cover,
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        );
+                      }
+                      return const Center(
+                        child: Text(
+                          'No Posts.',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
                       );
                     } else {
                       return const Center(
                         child: Text(
-                          'There is no tasks',
+                          'No Internet!',
                           style: TextStyle(
                             fontSize: 20,
                           ),

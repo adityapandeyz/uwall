@@ -272,6 +272,7 @@ class _SignUpWidgetState extends State<SignupScreen> {
     }
 
     //Navigator.of(context) not working!
-    navigatorKey.currentState!.popUntil((route) => route.isFirst);
+
+    Navigator.of(context).pushNamed('/verify-email-screen');
   }
 }

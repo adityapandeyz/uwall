@@ -39,7 +39,6 @@ dependencies:
   fluttertoast: ^8.0.9
   google_fonts: ^3.0.1
   image_cropper: ^2.0.3
-  image_downloader: ^0.31.0
   image_picker: ^0.8.5+3
   intl: ^0.17.0
   page_transition: ^2.0.9
@@ -53,6 +52,8 @@ dependencies:
   flutter_launcher_icons: ^0.10.0
   parallax_animation: ^0.0.3
   carousel_slider: ^4.1.1
+  dio: ^4.0.6
+  image_gallery_saver: ^1.7.1
 
 dev_dependencies:
   flutter_lints: ^2.0.0

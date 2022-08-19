@@ -12,6 +12,35 @@ import 'package:uwall/utils/colors.dart';
 import 'package:uwall/widgets/custom_button.dart';
 import 'package:uwall/widgets/custom_textfield.dart';
 
+import 'profile_screen.dart';
+
+class VerifyEmail extends StatefulWidget {
+  const VerifyEmail({Key? key}) : super(key: key);
+
+  @override
+  State<VerifyEmail> createState() => _VerifyEmailState();
+}
+
+class _VerifyEmailState extends State<VerifyEmail> {
+  bool isEmailVerified = false;
+  bool canResendEmail = false;
+
+  Future checkEmailVerified() async {
+    //Call after email verificaton
+    await FirebaseAuth.instance.currentUser!.reload();
+
+    setState(() {
+      isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
+    });
+
+    if (isEmailVerified) return;
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      isEmailVerified ? const UploadScreen() : const VerifyEmail();
+}
+
 class UploadScreen extends StatefulWidget {
   static const String routeName = '/upload-screen';
 
@@ -31,8 +60,18 @@ class _UploadScreenState extends State<UploadScreen> {
   String? myName;
   String _category = '';
 
-  final controllerTitle = TextEditingController();
-  final controllerComment = TextEditingController();
+  // final TextEditingController _controllerTitle =
+  //     TextEditingController(text: "");
+
+  final _controllerTitle = TextEditingController();
+  //final controllerComment = TextEditingController();
+
+  @override
+  void dispose() {
+    _controllerTitle.dispose();
+    //controllerComment.dispose();
+    super.dispose();
+  }
 
   void _showImageDialoge() {
     showDialog(
@@ -170,9 +209,9 @@ class _UploadScreenState extends State<UploadScreen> {
         {
           'id': _auth.currentUser!.uid,
           'userImage': myImage.toString(),
-          'userName': myName,
+          'userName': myName.toString(),
           'email': _auth.currentUser!.email,
-          'title': controllerTitle.toString(),
+          'title': _controllerTitle.text.trim(),
           'Image': imageUrl,
           'Category': _category.toString(),
           'downloads': 0,
@@ -182,17 +221,18 @@ class _UploadScreenState extends State<UploadScreen> {
       Fluttertoast.showToast(msg: 'Wallpaper uploaded successfully');
       Navigator.canPop(context) ? Navigator.pop(context) : null;
       imagefile = null;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ProfileScreen(
+            userId: _auth.currentUser!.uid,
+          ),
+        ),
+      );
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
       Navigator.canPop(context) ? Navigator.pop(context) : null;
     }
-  }
-
-  @override
-  void dispose() {
-    controllerTitle.dispose();
-    controllerComment.dispose();
-    super.dispose();
   }
 
   @override
@@ -209,7 +249,7 @@ class _UploadScreenState extends State<UploadScreen> {
             child: Column(
               children: [
                 CustomTextField(
-                  controller: controllerTitle,
+                  controller: _controllerTitle,
                   hintText: 'Title',
                   obsecureText: false,
                 ),

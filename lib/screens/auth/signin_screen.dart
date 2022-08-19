@@ -141,6 +141,8 @@ class _SigninScreenState extends State<SigninScreen> {
     }
 
     //Navigator.of(context) not working!
+    Navigator.of(context).pushNamed('/verify-email-screen');
+
     // navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 }
