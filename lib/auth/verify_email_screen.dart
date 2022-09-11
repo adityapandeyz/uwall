@@ -3,14 +3,10 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:uwall/screens/home_screen.dart';
-import 'package:uwall/utils/colors.dart';
+import 'package:uwall/utils/utils.dart';
 import 'package:uwall/widgets/custom_button.dart';
 
-import '../../main.dart';
-
 class VerifyEmailScreen extends StatefulWidget {
-  static const String routeName = '/verify-email-screen';
-
   const VerifyEmailScreen({Key? key}) : super(key: key);
 
   @override
@@ -66,7 +62,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       await Future.delayed(const Duration(seconds: 5));
       setState(() => canResendEmail = true);
     } catch (e) {
-      //Utils.showSnackBar(e.toString());
+      showSnackBar(
+        context,
+        e.toString(),
+      );
     }
   }
 
@@ -118,10 +117,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         style: TextStyle(fontSize: 21),
                       ),
                       onPressed: () {
-                        FirebaseAuth.instance.signOut().then((res) {
-                          navigatorKey.currentState!
-                              .popUntil((route) => route.isFirst);
-                        });
+                        FirebaseAuth.instance.signOut().then(
+                              (res) {},
+                            );
                       },
                     )
                   ],

@@ -1,14 +1,12 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:uwall/utils/utils.dart';
 
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_textfield.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
-  static const String routeName = '/forgot-password-screen';
-
   const ForgotPasswordScreen({
     Key? key,
   }) : super(key: key);
@@ -49,7 +47,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     const Text(
                       'Enter the email address associated with your account to receive password reset link.',
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
                       textAlign: TextAlign.center,
@@ -57,13 +55,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     const Text(
                       '(Make sure to check the Spam folder.)',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 11,
                         fontWeight: FontWeight.w500,
                       ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 18),
                     CustomTextField(
+                      lines: 1,
                       controller: emailController,
                       hintText: 'Email',
                       obsecureText: false,
@@ -74,7 +73,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ),
                     const SizedBox(height: 20),
                     CustomButton(
-                      text: 'Reset Password',
+                      text: 'RESET PASSWORD',
                       onTap: resetPassword,
                     ),
                     const SizedBox(height: 8),
@@ -110,16 +109,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         email: emailController.text.trim(),
       );
       //Utils.showSnackBar('Password Reset Email Sent');
-      Fluttertoast.showToast(msg: 'Passsword Reset Email Sent');
 
+      showSnackBar(context, 'Passsword Reset Email Sent');
       //navigatorKey.currentState!.popUntil((route) => route.isFirst);
-      Navigator.of(context).pushNamed('/signin-screen');
     } on FirebaseAuthException catch (error) {
       // ignore: avoid_print
       //print(e);
-      Fluttertoast.showToast(msg: error.toString());
+      showSnackBar(context, error.toString());
       // Utils.showSnackBar(e.message);
       Navigator.of(context).pop;
     }
+    Navigator.of(context).pop;
   }
 }

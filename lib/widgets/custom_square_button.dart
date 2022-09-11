@@ -21,9 +21,8 @@ class CustomSquareButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.only(left: 40),
+        padding: const EdgeInsets.only(left: 40),
         decoration: BoxDecoration(
-          color: secondaryColor,
           borderRadius: BorderRadius.circular(12),
         ),
         width: double.infinity,
@@ -33,7 +32,6 @@ class CustomSquareButton extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: Colors.white,
             ),
             const SizedBox(height: 8),
             Padding(
@@ -45,7 +43,6 @@ class CustomSquareButton extends StatelessWidget {
                   Text(
                     title,
                     style: const TextStyle(
-                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                       //fontWeight: FontWeight.bold,
@@ -54,7 +51,6 @@ class CustomSquareButton extends StatelessWidget {
                   Text(
                     subTitle,
                     style: const TextStyle(
-                      color: Colors.white,
                       fontSize: 12,
                       //fontWeight: FontWeight.bold,
                     ),

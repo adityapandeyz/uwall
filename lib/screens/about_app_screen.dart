@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:uwall/utils/colors.dart';
 
 class AboutAppScreen extends StatelessWidget {
-  static const String routeName = '/about-app-screen';
-
   const AboutAppScreen({Key? key}) : super(key: key);
 
   @override
@@ -12,49 +11,61 @@ class AboutAppScreen extends StatelessWidget {
         title: const Text('About App'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            const Text(
-              ' Developers:',
-              style: TextStyle(
-                color: Color.fromARGB(255, 255, 255, 255),
-              ),
-            ),
-            Container(
-              decoration: const BoxDecoration(
-                //borderRadius: BorderRadius.circular(10.0),
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 57, 14, 177),
-                    Color.fromARGB(255, 214, 9, 9),
-                  ],
+        child: Container(
+          decoration: BoxDecoration(
+            color: secondaryColor,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  ' Developers:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  )
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Image.asset('assets/logo/dot.-150x150.png'),
-              ),
+                const SizedBox(height: 10),
+                Container(
+                  decoration: const BoxDecoration(
+                    //borderRadius: BorderRadius.circular(10.0),
+                    gradient: LinearGradient(
+                      colors: [
+                        Color.fromARGB(255, 57, 14, 177),
+                        Color.fromARGB(255, 214, 9, 9),
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color.fromARGB(255, 0, 0, 0),
+                      )
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset('assets/logo/dot.-150x150.png'),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Version: 0.1.0+1',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                  ),
+                  //textAlign: TextAlign.,
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  '© 2022 dotResolution Studio',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
-            const Text(
-              'Version: 1.0.0',
-              style: TextStyle(
-                color: Color.fromARGB(255, 255, 255, 255),
-              ),
-              //textAlign: TextAlign.,
-            ),
-            const Text(
-              '© 2022 dotResolution Studio',
-              style: TextStyle(
-                color: Color.fromARGB(255, 255, 255, 255),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

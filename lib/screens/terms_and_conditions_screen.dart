@@ -1,17 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-final Uri _googlePlayServicesUrl =
-    Uri.parse('https://www.google.com/policies/privacy/');
-final Uri _googleAnalyticsForFirebaseUrl =
-    Uri.parse('https://firebase.google.com/policies/analytics');
-final Uri _firebaseCrashlyticsUrl =
-    Uri.parse('https://firebase.google.com/support/privacy/');
-
-class TermsAndConditionsScreen extends StatelessWidget {
-  static const String routeName = '/terms-and-conditions-screen';
-
+class TermsAndConditionsScreen extends StatefulWidget {
   const TermsAndConditionsScreen({Key? key}) : super(key: key);
+
+  @override
+  State<TermsAndConditionsScreen> createState() =>
+      _TermsAndConditionsScreenState();
+}
+
+class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
+  final Uri _googlePlayServicesUrl =
+      Uri.parse('https://www.google.com/policies/privacy/');
+  final Uri _googleAnalyticsForFirebaseUrl =
+      Uri.parse('https://firebase.google.com/policies/analytics');
+  final Uri _firebaseCrashlyticsUrl =
+      Uri.parse('https://firebase.google.com/support/privacy/');
+
+  Future<void>? _launched;
+  Future<void> _launchInBrowser(Uri url) async {
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +42,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
               const Text(
                 'Terms & Conditions',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -45,9 +59,9 @@ Link to Terms and Conditions of third-party service providers used by the app"""
               ),
               const SizedBox(height: 10),
               GestureDetector(
-                onTap: () {
-                  _launchGooglePlayServices();
-                },
+                onTap: () => setState(() {
+                  _launched = _launchInBrowser(_googlePlayServicesUrl);
+                }),
                 child: const Text(
                   '\u2022 Google Play Services',
                   style: TextStyle(
@@ -58,9 +72,9 @@ Link to Terms and Conditions of third-party service providers used by the app"""
               ),
               const SizedBox(height: 5),
               GestureDetector(
-                onTap: () {
-                  _launchGoogleAnalyticsForFirebaseUrl();
-                },
+                onTap: () => setState(() {
+                  _launched = _launchInBrowser(_googleAnalyticsForFirebaseUrl);
+                }),
                 child: const Text(
                   '\u2022 Google Analytics for Firebase',
                   style: TextStyle(
@@ -71,9 +85,9 @@ Link to Terms and Conditions of third-party service providers used by the app"""
               ),
               const SizedBox(height: 5),
               GestureDetector(
-                onTap: () {
-                  _launchFirebaseCrashlyticsUrl();
-                },
+                onTap: () => setState(() {
+                  _launched = _launchInBrowser(_firebaseCrashlyticsUrl);
+                }),
                 child: const Text(
                   '\u2022 Firebase Crashlytics',
                   style: TextStyle(
@@ -97,7 +111,7 @@ At some point, we may wish to update the app. The app is currently available on 
               const Text(
                 'Changes to This Terms and Conditions',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -109,7 +123,7 @@ These terms and conditions are effective as of 2022-08-16"""),
               const Text(
                 'Contact Us',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -137,7 +151,14 @@ These terms and conditions are effective as of 2022-08-16"""),
 }
 
 _launchEmail() async {
-  final url = Uri.encodeFull('mailto:admin@dresolution.tech');
+  final Uri params = Uri(
+    scheme: 'mailto',
+    path: 'admin@dresolution.tech',
+    query:
+        'subject=App Feedback&body=App Version 0.1.0+1', //add subject and body here
+  );
+  var url = params.toString();
+
   if (await canLaunch(url)) {
     await launch(url);
   } else {
@@ -145,20 +166,20 @@ _launchEmail() async {
   }
 }
 
-Future<void> _launchGooglePlayServices() async {
-  if (!await launchUrl(_googlePlayServicesUrl)) {
-    throw 'Could not launch $_googlePlayServicesUrl';
-  }
-}
+// Future<void> _launchGooglePlayServices() async {
+//   if (!await launchUrl(_googlePlayServicesUrl)) {
+//     throw 'Could not launch $_googlePlayServicesUrl';
+//   }
+// }
 
-Future<void> _launchGoogleAnalyticsForFirebaseUrl() async {
-  if (!await launchUrl(_googleAnalyticsForFirebaseUrl)) {
-    throw 'Could not launch $_googleAnalyticsForFirebaseUrl';
-  }
-}
+// Future<void> _launchGoogleAnalyticsForFirebaseUrl() async {
+//   if (!await launchUrl(_googleAnalyticsForFirebaseUrl)) {
+//     throw 'Could not launch $_googleAnalyticsForFirebaseUrl';
+//   }
+// }
 
-Future<void> _launchFirebaseCrashlyticsUrl() async {
-  if (!await launchUrl(_firebaseCrashlyticsUrl)) {
-    throw 'Could not launch $_firebaseCrashlyticsUrl';
-  }
-}
+// Future<void> _launchFirebaseCrashlyticsUrl() async {
+//   if (!await launchUrl(_firebaseCrashlyticsUrl)) {
+//     throw 'Could not launch $_firebaseCrashlyticsUrl';
+//   }
+// }

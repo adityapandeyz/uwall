@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:parallax_animation/parallax_animation.dart';
 import 'package:uwall/screens/download_screen.dart';
+import 'package:uwall/utils/colors.dart';
 
 class PhotoItem {
   final String image;
@@ -16,8 +17,6 @@ class PhotoItem {
 }
 
 class CategoryScreen extends StatefulWidget {
-  static const String routeName = '/category-screen';
-
   const CategoryScreen({Key? key}) : super(key: key);
 
   @override
@@ -26,7 +25,7 @@ class CategoryScreen extends StatefulWidget {
 
 final List<PhotoItem> _items = [
   PhotoItem(
-    "https://images.wallpaperscraft.com/image/single/cosmic_explosion_bright_lines_137382_1280x720.jpg",
+    "https://r4.wallpaperflare.com/wallpaper/996/184/951/night-artwork-futuristic-city-cyberpunk-wallpaper-58e64db860307c78c0cc910e28a2847a.jpg",
     "3D",
     "3d",
   ),
@@ -41,7 +40,7 @@ final List<PhotoItem> _items = [
     "animals",
   ),
   PhotoItem(
-    "https://c4.wallpaperflare.com/wallpaper/588/409/90/demon-slayer-kimetsu-no-yaiba-kimetsu-no-yaiba-tanjirou-kamado-hd-wallpaper-preview.jpg",
+    "https://r4.wallpaperflare.com/wallpaper/843/347/678/fate-series-fate-stay-night-anime-girls-saber-wallpaper-5c379f1eba4c9eea837b95292302d0d4.jpg",
     "Anime",
     "anime",
   ),
@@ -153,19 +152,29 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 background: CachedNetworkImage(
                   imageUrl: _items[index].image,
                   placeholder: (context, url) => Container(
-                    color: const Color(0xfff5f8fd),
+                    color: secondaryColor,
                   ),
                   fit: BoxFit.cover,
                 ),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 50.0),
-                    child: Text(
-                      _items[index].title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 40,
-                        fontWeight: FontWeight.w900,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 50.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            _items[index].title,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 28,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          const Icon(Icons.arrow_forward_ios_rounded)
+                        ],
                       ),
                     ),
                   ),
@@ -309,14 +318,14 @@ class CategoryView extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.all(8),
           child: Column(
             children: [
               StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
-                    .collection('wallpaper')
-                    .where("Category", isEqualTo: value.toString())
-                    // .orderBy('createdAt', descending: true)
+                    .collection('wallpapers')
+                    .where("category", isEqualTo: value.toString())
+                    // .orderBy('downloads', descending: true)
                     .snapshots(),
                 builder: (context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -348,8 +357,8 @@ class CategoryView extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (_) => DownloadScreen(
-                                  clickedImageId: snapshot.data!.docs[index]
-                                      ['createdAt'],
+                                  wallpaperId: snapshot.data!.docs[index]
+                                      ['wallpaperId'],
                                   downloads: snapshot.data!.docs[index]
                                       ['downloads'],
                                 ),
@@ -359,10 +368,9 @@ class CategoryView extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8),
                             child: CachedNetworkImage(
-                              imageUrl: snapshot.data!.docs[index]['Image'],
-                              placeholder: (context, url) => Container(
-                                color: const Color(0xfff5f8fd),
-                              ),
+                              imageUrl: snapshot.data!.docs[index]['image'],
+                              placeholder: (context, url) =>
+                                  Container(color: secondaryColor),
                               fit: BoxFit.cover,
                             ),
                           ),

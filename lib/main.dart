@@ -4,13 +4,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:uwall/router.dart';
-import 'package:uwall/screens/home_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:firebase_core/firebase_core.dart';
-
+import 'package:provider/provider.dart';
+import 'package:uwall/providers/login_state_provider.dart';
+import 'package:uwall/providers/user_provider.dart';
+import 'package:uwall/screens/home_screen.dart';
 import 'utils/colors.dart';
-import 'widgets/side_drawer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,12 +30,15 @@ void main() async {
   runApp(const MyApp());
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      systemNavigationBarColor: Color.fromARGB(255, 0, 0, 0),
+      systemNavigationBarColor: Colors.black,
+      statusBarColor: Colors.black,
+
+      // statusBarColor: Colors.black,
+      // statusBarIconBrightness: Brightness.dark,
+      // statusBarBrightness: Brightness.light,
     ),
   );
 }
-
-final navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -45,59 +48,54 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-    return MaterialApp(
-      title: 'uwall',
-      navigatorKey: navigatorKey,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primarySwatch: Colors.grey,
-        iconTheme: const IconThemeData(
-          color: Colors.white,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => UserProvider(),
         ),
-        listTileTheme: const ListTileThemeData(
-          iconColor: Colors.white,
+        ChangeNotifierProvider(
+          create: (_) => LoginStateProvider(),
         ),
-        hintColor: Colors.white,
-        radioTheme: RadioThemeData(
-          fillColor: MaterialStateColor.resolveWith(
-            (states) => Colors.white,
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Uwall',
+        theme: ThemeData.dark().copyWith(
+          scaffoldBackgroundColor: backgroundColor,
+          primaryColor: primaryColor,
+          textTheme: TextTheme(
+            bodyText1: GoogleFonts.getFont('Montserrat'),
+            bodyText2: GoogleFonts.getFont('Montserrat'),
+            caption: GoogleFonts.getFont('Montserrat'),
+          ),
+          appBarTheme: AppBarTheme(
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarColor: Color.fromARGB(255, 0, 0, 0),
+              statusBarIconBrightness: Brightness.light,
+              statusBarBrightness: Brightness.light,
+            ),
+            elevation: 0,
+            centerTitle: false,
+            color: secondaryColor,
+            titleTextStyle: GoogleFonts.getFont('Montserrat'),
           ),
         ),
-        hoverColor: primaryColor,
-        indicatorColor: primaryColor,
-        textTheme: GoogleFonts.sourceSansProTextTheme(
-          Theme.of(context).textTheme.apply(
-                bodyColor: Colors.white,
-              ),
+        home: AnimatedSplashScreen(
+          duration: 3000,
+          splashIconSize: 175,
+          splash: 'assets/logo/uwall_logo_512px.png',
+          nextScreen: const NextScreen(),
+          splashTransition: SplashTransition.fadeTransition,
+          pageTransitionType: PageTransitionType.fade,
+          backgroundColor: const Color.fromARGB(255, 0, 0, 0),
         ),
-        scaffoldBackgroundColor: backgroundColor,
-        appBarTheme: const AppBarTheme(
-          color: backgroundColor,
-          iconTheme: IconThemeData(
-            color: Colors.white,
-          ),
-          titleTextStyle: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      onGenerateRoute: (settings) => generateRoute(settings),
-      home: AnimatedSplashScreen(
-        duration: 3000,
-        splashIconSize: 175,
-        splash: 'assets/logo/uwall_logo_512px.png',
-        nextScreen: const HomeScreen(),
-        splashTransition: SplashTransition.fadeTransition,
-        pageTransitionType: PageTransitionType.fade,
-        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       ),
     );
   }
 }
 
-class SideDrawer extends StatelessWidget {
-  const SideDrawer({Key? key}) : super(key: key);
+class NextScreen extends StatelessWidget {
+  const NextScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -105,19 +103,27 @@ class SideDrawer extends StatelessWidget {
       body: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.hasError) {
+            } else if (snapshot.hasData) {
+              return const HomeScreen();
+            }
+            const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(),
             );
-          } else if (snapshot.hasError) {
+          } else if (snapshot.connectionState == ConnectionState.none) {
             return const Center(
-              child: Text('Something went wrong!'),
+              child: Text('No Connection!'),
             );
-          } else if (snapshot.hasData) {
-            return const LogedInDrawer();
-          } else {
-            return const LogedOutDrawer();
           }
+
+          return const HomeScreen();
         },
       ),
     );

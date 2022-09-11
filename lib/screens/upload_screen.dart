@@ -5,45 +5,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_awesome_select/flutter_awesome_select.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
+import 'package:uwall/resources/storage_methods.dart';
+import 'package:uwall/screens/home_screen.dart';
 import 'package:uwall/utils/colors.dart';
+import 'package:uwall/utils/utils.dart';
 import 'package:uwall/widgets/custom_button.dart';
 import 'package:uwall/widgets/custom_textfield.dart';
+import 'package:uwall/widgets/sign_in_widget.dart';
 
 import 'profile_screen.dart';
 
-class VerifyEmail extends StatefulWidget {
-  const VerifyEmail({Key? key}) : super(key: key);
-
-  @override
-  State<VerifyEmail> createState() => _VerifyEmailState();
-}
-
-class _VerifyEmailState extends State<VerifyEmail> {
-  bool isEmailVerified = false;
-  bool canResendEmail = false;
-
-  Future checkEmailVerified() async {
-    //Call after email verificaton
-    await FirebaseAuth.instance.currentUser!.reload();
-
-    setState(() {
-      isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
-    });
-
-    if (isEmailVerified) return;
-  }
-
-  @override
-  Widget build(BuildContext context) =>
-      isEmailVerified ? const UploadScreen() : const VerifyEmail();
-}
-
 class UploadScreen extends StatefulWidget {
-  static const String routeName = '/upload-screen';
-
   const UploadScreen({Key? key}) : super(key: key);
 
   @override
@@ -51,8 +26,31 @@ class UploadScreen extends StatefulWidget {
 }
 
 class _UploadScreenState extends State<UploadScreen> {
-  final formKey = GlobalKey<FormState>();
+  bool isUserLoggedIn = false;
 
+  checkUserLoginState() {
+    if (FirebaseAuth.instance.currentUser != null) {
+      setState(() {
+        isUserLoggedIn = true;
+      });
+    }
+    return isUserLoggedIn;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return checkUserLoginState() ? const UploadPage() : SignInWidget();
+  }
+}
+
+class UploadPage extends StatefulWidget {
+  const UploadPage({Key? key}) : super(key: key);
+
+  @override
+  State<UploadPage> createState() => _UploadPageState();
+}
+
+class _UploadPageState extends State<UploadPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   File? imagefile;
   String? imageUrl;
@@ -63,14 +61,14 @@ class _UploadScreenState extends State<UploadScreen> {
   // final TextEditingController _controllerTitle =
   //     TextEditingController(text: "");
 
-  final _controllerTitle = TextEditingController();
-  //final controllerComment = TextEditingController();
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
 
   @override
   void dispose() {
-    _controllerTitle.dispose();
-    //controllerComment.dispose();
     super.dispose();
+    _titleController.dispose();
+    _descriptionController.dispose();
   }
 
   void _showImageDialoge() {
@@ -78,7 +76,7 @@ class _UploadScreenState extends State<UploadScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: secondaryColor,
+          backgroundColor: Color.fromARGB(255, 29, 29, 29),
           title: const Text("Please choose an option"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -163,8 +161,8 @@ class _UploadScreenState extends State<UploadScreen> {
         .get()
         .then<dynamic>(
       (DocumentSnapshot snapshot) async {
-        myImage = snapshot.get('userImage');
-        myName = snapshot.get('name');
+        myImage = snapshot.get('photoUrl');
+        myName = snapshot.get('fullName');
       },
     );
   }
@@ -184,53 +182,46 @@ class _UploadScreenState extends State<UploadScreen> {
       ),
     );
     if (imagefile == null) {
-      Fluttertoast.showToast(msg: 'Please Select an Image');
+      showSnackBar(context, 'Please select an image!');
       Navigator.canPop(context) ? Navigator.pop(context) : null;
       return;
     } else if (_category == null) {
-      Fluttertoast.showToast(msg: 'Please choose the category');
+      showSnackBar(context, 'Please choose the category!');
       Navigator.canPop(context) ? Navigator.pop(context) : null;
       return;
     }
     try {
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child("userImages")
-          .child("${DateTime.now()}.jpg");
+      String photoUrl = await StorageMethods()
+          .uploadImageToStorage('wallpapers', imagefile!, true);
+      String wallpaperId = const Uuid().v1();
 
-      await ref.putFile(imagefile!);
-
-      imageUrl = await ref.getDownloadURL();
-
-      FirebaseFirestore.instance
-          .collection("wallpaper")
-          .doc(DateTime.now().toString())
-          .set(
+      FirebaseFirestore.instance.collection("wallpapers").doc(wallpaperId).set(
         {
-          'id': _auth.currentUser!.uid,
+          'uid': _auth.currentUser!.uid,
+          'wallpaperId': wallpaperId,
           'userImage': myImage.toString(),
-          'userName': myName.toString(),
+          'fullName': myName.toString(),
           'email': _auth.currentUser!.email,
-          'title': _controllerTitle.text.trim(),
-          'Image': imageUrl,
-          'Category': _category.toString(),
+          'title': _titleController.text,
+          'image': photoUrl,
+          'description': _descriptionController.text,
+          'category': _category.toString(),
           'downloads': 0,
+          'likes': [],
           'createdAt': DateTime.now(),
         },
       );
-      Fluttertoast.showToast(msg: 'Wallpaper uploaded successfully');
+      showSnackBar(context, 'Wallpaper uploaded successfully');
       Navigator.canPop(context) ? Navigator.pop(context) : null;
       imagefile = null;
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => ProfileScreen(
-            userId: _auth.currentUser!.uid,
-          ),
+          builder: (_) => const HomeScreen(),
         ),
       );
     } catch (error) {
-      Fluttertoast.showToast(msg: error.toString());
+      showSnackBar(context, error.toString());
       Navigator.canPop(context) ? Navigator.pop(context) : null;
     }
   }
@@ -244,71 +235,76 @@ class _UploadScreenState extends State<UploadScreen> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: formKey,
-            child: Column(
-              children: [
-                CustomTextField(
-                  controller: _controllerTitle,
-                  hintText: 'Title',
-                  obsecureText: false,
-                ),
-                const SizedBox(height: 10),
-                SmartSelect<String>.single(
-                  title: 'Category',
-                  selectedValue: _category,
-                  choiceItems: days,
-                  onChange: (selected) => setState(
-                    () => _category = selected.value,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      _showImageDialoge();
-                    },
-                    child: Container(
-                      child: imagefile != null
-                          ? Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              width: double.infinity,
-                              height: MediaQuery.of(context).size.height / 3.5,
-                              child: Image(image: Image.file(imagefile!).image),
-                            )
-
-                          //  CircleAvatar(
-                          //     radius: 64,
-                          //     backgroundImage: Image.file(imagefile!).image,
-                          //   )
-                          : Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              width: double.infinity,
-                              height: MediaQuery.of(context).size.height / 3.5,
-                              child: Icon(
-                                Icons.add_a_photo_outlined,
-                                color: Colors.grey[800],
-                                size: 40,
-                              ),
-                            ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                CustomButton(
-                  text: 'Upload',
+          child: Column(
+            children: [
+              Center(
+                child: GestureDetector(
                   onTap: () {
-                    _upload_image();
+                    _showImageDialoge();
                   },
-                )
-              ],
-            ),
+                  child: Container(
+                    child: imagefile != null
+                        ? Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height / 3.5,
+                            child: Image(image: Image.file(imagefile!).image),
+                          )
+
+                        //  CircleAvatar(
+                        //     radius: 64,
+                        //     backgroundImage: Image.file(imagefile!).image,
+                        //   )
+                        : Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height / 3.5,
+                            child: Icon(
+                              Icons.add_a_photo_outlined,
+                              color: Colors.grey[800],
+                              size: 40,
+                            ),
+                          ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              CustomTextField(
+                lines: 1,
+                controller: _titleController,
+                hintText: 'Title',
+                obsecureText: false,
+              ),
+              const SizedBox(height: 10),
+              CustomTextField(
+                lines: 4,
+                controller: _descriptionController,
+                hintText: 'Description...',
+                obsecureText: false,
+              ),
+              const SizedBox(height: 10),
+              SmartSelect<String>.single(
+                title: 'Category',
+                selectedValue: _category,
+                choiceItems: days,
+                onChange: (selected) => setState(
+                  () => _category = selected.value,
+                ),
+              ),
+              const SizedBox(height: 20),
+              CustomButton(
+                text: 'UPLOAD',
+                onTap: () {
+                  _upload_image();
+                },
+              )
+            ],
           ),
         ),
       ),

@@ -1,17 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-final Uri _googlePlayServicesUrl =
-    Uri.parse('https://www.google.com/policies/privacy/');
-final Uri _googleAnalyticsForFirebaseUrl =
-    Uri.parse('https://firebase.google.com/policies/analytics');
-final Uri _firebaseCrashlyticsUrl =
-    Uri.parse('https://firebase.google.com/support/privacy/');
-
-class PrivacyPolicyScreen extends StatelessWidget {
+class PrivacyPolicyScreen extends StatefulWidget {
   static const String routeName = '/privacy-policy-screen';
 
   const PrivacyPolicyScreen({Key? key}) : super(key: key);
+
+  @override
+  State<PrivacyPolicyScreen> createState() => _PrivacyPolicyScreenState();
+}
+
+class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
+  final Uri _googlePlayServicesUrl =
+      Uri.parse('https://www.google.com/policies/privacy/');
+  final Uri _googleAnalyticsForFirebaseUrl =
+      Uri.parse('https://firebase.google.com/policies/analytics');
+  final Uri _firebaseCrashlyticsUrl =
+      Uri.parse('https://firebase.google.com/support/privacy/');
+
+  Future<void>? _launched;
+  Future<void> _launchInBrowser(Uri url) async {
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +43,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               const Text(
                 'Privacy Policy',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -45,7 +60,7 @@ The terms used in this Privacy Policy have the same meanings as in our Terms and
               const Text(
                 'Information Collection and Use',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -57,9 +72,9 @@ The app does use third-party services that may collect information used to ident
 Link to the privacy policy of third-party service providers used by the app"""),
               const SizedBox(height: 5),
               GestureDetector(
-                onTap: () {
-                  _launchGooglePlayServices();
-                },
+                onTap: () => setState(() {
+                  _launched = _launchInBrowser(_googlePlayServicesUrl);
+                }),
                 child: const Text(
                   '\u2022 Google Play Services',
                   style: TextStyle(
@@ -70,9 +85,9 @@ Link to the privacy policy of third-party service providers used by the app"""),
               ),
               const SizedBox(height: 5),
               GestureDetector(
-                onTap: () {
-                  _launchGoogleAnalyticsForFirebaseUrl();
-                },
+                onTap: () => setState(() {
+                  _launched = _launchInBrowser(_googleAnalyticsForFirebaseUrl);
+                }),
                 child: const Text(
                   '\u2022 Google Analytics for Firebase',
                   style: TextStyle(
@@ -83,9 +98,9 @@ Link to the privacy policy of third-party service providers used by the app"""),
               ),
               const SizedBox(height: 5),
               GestureDetector(
-                onTap: () {
-                  _launchFirebaseCrashlyticsUrl();
-                },
+                onTap: () => setState(() {
+                  _launched = _launchInBrowser(_firebaseCrashlyticsUrl);
+                }),
                 child: const Text(
                   '\u2022 Firebase Crashlytics',
                   style: TextStyle(
@@ -98,7 +113,7 @@ Link to the privacy policy of third-party service providers used by the app"""),
               const Text(
                 'Log Data',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -108,7 +123,7 @@ Link to the privacy policy of third-party service providers used by the app"""),
               const Text(
                 'Cookies',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -120,7 +135,7 @@ This Service does not use these “cookies” explicitly. However, the app may u
               const Text(
                 'Cookies',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -132,7 +147,7 @@ This Service does not use these “cookies” explicitly. However, the app may u
               const Text(
                 'Service Providers',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -152,7 +167,7 @@ We want to inform users of this Service that these third parties have access to 
               const Text(
                 'Security',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -162,7 +177,7 @@ We want to inform users of this Service that these third parties have access to 
               const Text(
                 'Links to Other Sites',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -172,7 +187,7 @@ We want to inform users of this Service that these third parties have access to 
               const Text(
                 'Children’s Privacy',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -182,7 +197,7 @@ We want to inform users of this Service that these third parties have access to 
               const Text(
                 'Changes to This Privacy Policy',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -194,7 +209,7 @@ This policy is effective as of 2022-08-15"""),
               const Text(
                 'Contact Us',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -222,7 +237,14 @@ This policy is effective as of 2022-08-15"""),
 }
 
 _launchEmail() async {
-  final url = Uri.encodeFull('mailto:admin@dresolution.tech');
+  final Uri params = Uri(
+    scheme: 'mailto',
+    path: 'admin@dresolution.tech',
+    query:
+        'subject=App Feedback&body=App Version 0.1.0+1', //add subject and body here
+  );
+  var url = params.toString();
+
   if (await canLaunch(url)) {
     await launch(url);
   } else {
@@ -230,20 +252,20 @@ _launchEmail() async {
   }
 }
 
-Future<void> _launchGooglePlayServices() async {
-  if (!await launchUrl(_googlePlayServicesUrl)) {
-    throw 'Could not launch $_googlePlayServicesUrl';
-  }
-}
+// Future<void> _launchGooglePlayServices() async {
+//   if (!await launchUrl(_googlePlayServicesUrl)) {
+//     throw 'Could not launch $_googlePlayServicesUrl';
+//   }
+// }
 
-Future<void> _launchGoogleAnalyticsForFirebaseUrl() async {
-  if (!await launchUrl(_googleAnalyticsForFirebaseUrl)) {
-    throw 'Could not launch $_googleAnalyticsForFirebaseUrl';
-  }
-}
+// Future<void> _launchGoogleAnalyticsForFirebaseUrl() async {
+//   if (!await launchUrl(_googleAnalyticsForFirebaseUrl)) {
+//     throw 'Could not launch $_googleAnalyticsForFirebaseUrl';
+//   }
+// }
 
-Future<void> _launchFirebaseCrashlyticsUrl() async {
-  if (!await launchUrl(_firebaseCrashlyticsUrl)) {
-    throw 'Could not launch $_firebaseCrashlyticsUrl';
-  }
-}
+// Future<void> _launchFirebaseCrashlyticsUrl() async {
+//   if (!await launchUrl(_firebaseCrashlyticsUrl)) {
+//     throw 'Could not launch $_firebaseCrashlyticsUrl';
+//   }
+// }

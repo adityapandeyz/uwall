@@ -18,21 +18,26 @@ class CustomButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: secondaryColor,
+          color: primaryColor,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Center(
           child: Text(
-            text,
+            text.toUpperCase(),
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 11,
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
       ),
     );
+
+    // return ElevatedButton(
+    //   onPressed: onTap,
+    //   child: Text(text),
+    // );
   }
 }

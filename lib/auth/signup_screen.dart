@@ -1,22 +1,19 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:uwall/auth/verify_email_screen.dart';
+import 'package:uwall/resources/auth_methods.dart';
 import 'package:uwall/utils/colors.dart';
+import 'package:uwall/utils/utils.dart';
 
-import '../../main.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_textfield.dart';
 
 class SignupScreen extends StatefulWidget {
-  static const String routeName = '/signup-screen';
-
   const SignupScreen({
     Key? key,
   }) : super(key: key);
@@ -26,10 +23,11 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignUpWidgetState extends State<SignupScreen> {
+  final formKey = GlobalKey<FormState>();
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  final formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
+  final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -38,7 +36,7 @@ class _SignUpWidgetState extends State<SignupScreen> {
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _fullNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
 
@@ -50,7 +48,7 @@ class _SignUpWidgetState extends State<SignupScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: secondaryColor,
+          backgroundColor: const Color.fromARGB(255, 29, 29, 29),
           title: const Text("Please choose an option"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -179,8 +177,9 @@ class _SignUpWidgetState extends State<SignupScreen> {
                     ),
                     const SizedBox(height: 20),
                     CustomTextField(
-                      controller: _nameController,
-                      hintText: 'Name',
+                      lines: 1,
+                      controller: _fullNameController,
+                      hintText: 'Full Name',
                       obsecureText: false,
                       customTextFieldValidator: (value) =>
                           value != null && value.length < 2
@@ -189,6 +188,7 @@ class _SignUpWidgetState extends State<SignupScreen> {
                     ),
                     const SizedBox(height: 10),
                     CustomTextField(
+                      lines: 1,
                       controller: _emailController,
                       hintText: 'Email',
                       obsecureText: false,
@@ -199,6 +199,7 @@ class _SignUpWidgetState extends State<SignupScreen> {
                     ),
                     const SizedBox(height: 10),
                     CustomTextField(
+                      lines: 1,
                       controller: _passwordController,
                       hintText: 'Password',
                       obsecureText: true,
@@ -211,8 +212,8 @@ class _SignUpWidgetState extends State<SignupScreen> {
                       height: 22,
                     ),
                     CustomButton(
-                      text: 'Sign Up',
-                      onTap: signUp,
+                      text: 'CREATE ACCOUNT',
+                      onTap: signUpUser,
                     ),
                   ],
                 ),
@@ -224,7 +225,7 @@ class _SignUpWidgetState extends State<SignupScreen> {
     );
   }
 
-  Future signUp() async {
+  Future signUpUser() async {
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
 
@@ -235,44 +236,32 @@ class _SignUpWidgetState extends State<SignupScreen> {
         child: CircularProgressIndicator(),
       ),
     );
-    if (imagefile == null) {
-      Fluttertoast.showToast(msg: "Please select an Image");
-      return;
-    }
-    try {
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child("userImages")
-          .child('${DateTime.now()}.jpg');
 
-      await ref.putFile(imagefile!);
+    // if (_fullNameController.text == null ||
+    //     _emailController == null ||
+    //     _passwordController == null ||
+    //     imagefile == null) {
+    //   showSnackBar(context, "Empty fields!");
+    //   Navigator.canPop(context) ? Navigator.pop(context) : null;
 
-      imageUrl = await ref.getDownloadURL();
+    //   return;
+    // }
 
-      await _auth.createUserWithEmailAndPassword(
-        email: _emailController.text.trim().toString(),
-        password: _passwordController.text.trim(),
-      );
+    String res = await AuthMethods().signUpUser(
+      fullName: _fullNameController.text,
+      email: _emailController.text,
+      password: _passwordController.text,
+      file: imagefile!,
+    );
 
-      final User? user = _auth.currentUser;
-      final uid = user!.uid;
+    Navigator.canPop(context) ? Navigator.pop(context) : null;
 
-      FirebaseFirestore.instance.collection('users').doc(uid).set({
-        "id": uid,
-        "userImage": imageUrl,
-        "name": _nameController.text,
-        "email": _emailController.text,
-        "createdAt": Timestamp.now(),
-      });
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => const VerifyEmailScreen(),
+      ),
+    );
 
-      Navigator.canPop(context) ? Navigator.pop(context) : null;
-    } catch (error) {
-      Fluttertoast.showToast(msg: error.toString());
-      Navigator.pop(context);
-    }
-
-    //Navigator.of(context) not working!
-
-    Navigator.of(context).pushNamed('/verify-email-screen');
+    showSnackBar(context, res);
   }
 }
