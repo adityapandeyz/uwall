@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:uwall/auth/signin_screen.dart';
-import 'package:uwall/utils/colors.dart';
 
 import 'custom_rectangle.dart';
 

@@ -3,9 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:uwall/screens/home_screen.dart';
 import 'package:uwall/utils/utils.dart';
 import 'package:uwall/widgets/custom_rectangle.dart';
+import 'package:uwall/widgets/empty_warning.dart';
 import 'package:uwall/widgets/sign_in_widget.dart';
 import 'package:uwall/widgets/square_box.dart';
 
@@ -185,9 +187,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const SizedBox(height: 20),
-                            CircleAvatar(
-                              radius: 40,
-                              backgroundImage: NetworkImage(image!),
+                            // CircleAvatar(
+                            //   radius: 40,
+                            //   backgroundImage: NetworkImage(image!),
+                            // ),
+                            InstaImageViewer(
+                              child: CircleAvatar(
+                                radius: 44,
+                                backgroundImage: Image.network(
+                                  image!,
+                                ).image,
+                              ),
                             ),
                             const SizedBox(height: 20),
                             Text(
@@ -309,7 +319,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                         });
 
                                                         showSnackBar(context,
-                                                            'You have unfollowed this user!');
+                                                            'Unfollowed successfuly!');
 
                                                         setState(() {
                                                           isFollowing = false;
@@ -437,6 +447,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 } else if (snapshot.connectionState ==
                                     ConnectionState.active) {
                                   if (snapshot.hasData) {
+                                    if (snapshot.data.docs.isEmpty) {
+                                      return const EmptyWarning(
+                                        text: 'No Posts!',
+                                        icon: Icons.thumb_up_alt_outlined,
+                                      );
+                                    }
                                     return GridView.builder(
                                       physics:
                                           const NeverScrollableScrollPhysics(),
@@ -505,6 +521,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       },
                                     );
                                   }
+
                                   return const Center(
                                     child: Text(
                                       'No Posts.',

@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:parallax_animation/parallax_animation.dart';
 import 'package:uwall/screens/download_screen.dart';
 import 'package:uwall/utils/colors.dart';
+import 'package:uwall/widgets/empty_warning.dart';
 
 class PhotoItem {
   final String image;
@@ -40,7 +41,7 @@ final List<PhotoItem> _items = [
     "animals",
   ),
   PhotoItem(
-    "https://r4.wallpaperflare.com/wallpaper/843/347/678/fate-series-fate-stay-night-anime-girls-saber-wallpaper-5c379f1eba4c9eea837b95292302d0d4.jpg",
+    "https://r4.wallpaperflare.com/wallpaper/869/512/849/anime-demon-slayer-kimetsu-no-yaiba-zenitsu-agatsuma-hd-wallpaper-f2f12240fdf64e0b1ab802850008e9d2.jpg",
     "Anime",
     "anime",
   ),
@@ -316,81 +317,78 @@ class CategoryView extends StatelessWidget {
       appBar: AppBar(
         title: Text(heading),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            children: [
-              StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('wallpapers')
-                    .where("category", isEqualTo: value.toString())
-                    // .orderBy('downloads', descending: true)
-                    .snapshots(),
-                builder: (context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (snapshot.connectionState ==
-                      ConnectionState.active) {
-                    if (!snapshot.hasData) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    return GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: snapshot.data!.docs.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisSpacing: 5,
-                        mainAxisSpacing: 5,
-                        crossAxisCount: 3,
-                        mainAxisExtent: 250,
-                      ),
-                      itemBuilder: (BuildContext context, int index) {
-                        return GestureDetector(
-                          onTap: (() {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => DownloadScreen(
-                                  wallpaperId: snapshot.data!.docs[index]
-                                      ['wallpaperId'],
-                                  downloads: snapshot.data!.docs[index]
-                                      ['downloads'],
-                                ),
-                              ),
-                            );
-                          }),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: CachedNetworkImage(
-                              imageUrl: snapshot.data!.docs[index]['image'],
-                              placeholder: (context, url) =>
-                                  Container(color: secondaryColor),
-                              fit: BoxFit.cover,
-                            ),
+      body: Padding(
+        padding: const EdgeInsets.all(8),
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('wallpapers')
+              .where("category", isEqualTo: value.toString())
+              // .orderBy('downloads', descending: true)
+              .snapshots(),
+          builder: (context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.connectionState == ConnectionState.active) {
+              if (!snapshot.hasData) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.data.docs.isEmpty) {
+                return const EmptyWarning(
+                  text: 'No Posts!',
+                  icon: Icons.no_photography_sharp,
+                );
+              }
+
+              return GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: snapshot.data!.docs.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                  crossAxisCount: 3,
+                  mainAxisExtent: 250,
+                ),
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                    onTap: (() {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => DownloadScreen(
+                            wallpaperId: snapshot.data!.docs[index]
+                                ['wallpaperId'],
+                            downloads: snapshot.data!.docs[index]['downloads'],
                           ),
-                        );
-                      },
-                    );
-                  } else {
-                    return const Center(
-                      child: Text(
-                        'There is no tasks',
-                        style: TextStyle(
-                          fontSize: 20,
                         ),
+                      );
+                    }),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: CachedNetworkImage(
+                        imageUrl: snapshot.data!.docs[index]['image'],
+                        placeholder: (context, url) =>
+                            Container(color: secondaryColor),
+                        fit: BoxFit.cover,
                       ),
-                    );
-                  }
+                    ),
+                  );
                 },
-              ),
-            ],
-          ),
+              );
+            } else {
+              return const Center(
+                child: Text(
+                  'There is no tasks',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+              );
+            }
+          },
         ),
       ),
     );

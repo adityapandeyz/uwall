@@ -119,8 +119,21 @@ class _SignUpWidgetState extends State<SignupScreen> {
   }
 
   void _cropImage(filePath) async {
-    CroppedFile? croppedImage = await ImageCropper()
-        .cropImage(sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
+    CroppedFile? croppedImage = await ImageCropper().cropImage(
+      sourcePath: filePath,
+      maxHeight: 1080,
+      maxWidth: 1080,
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Cropper',
+          // toolbarColor: secondaryColor,
+          activeControlsWidgetColor: primaryColor,
+          // toolbarWidgetColor: secondaryColor,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false,
+        ),
+      ],
+    );
 
     if (croppedImage != null) {
       setState(() {

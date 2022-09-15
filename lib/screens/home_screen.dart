@@ -1,9 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:uwall/screens/account_screen.dart';
 import 'package:uwall/screens/category_screen.dart';
 import 'package:uwall/screens/feed_screen.dart';
-import 'package:uwall/screens/profile_screen.dart';
 import 'package:uwall/screens/liked_screen.dart';
 import 'package:uwall/screens/upload_screen.dart';
 import 'package:uwall/utils/colors.dart';
@@ -38,16 +36,16 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView(
-        physics: NeverScrollableScrollPhysics(),
-        children: [
+        physics: const NeverScrollableScrollPhysics(),
+        controller: pageController,
+        onPageChanged: onPageChanged,
+        children: const [
           FeedScreen(),
           LikedScreen(),
           UploadScreen(),
           CategoryScreen(),
           AccountScreen(),
         ],
-        controller: pageController,
-        onPageChanged: onPageChanged,
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: backgroundColor,
@@ -59,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
         unselectedFontSize: 11,
         onTap: navigationTapped,
         currentIndex: _currentIndex,
-        items: [
+        items: const [
           BottomNavigationBarItem(
             label: '',
             icon: Icon(

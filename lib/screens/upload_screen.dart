@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_awesome_select/flutter_awesome_select.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -15,8 +14,6 @@ import 'package:uwall/utils/utils.dart';
 import 'package:uwall/widgets/custom_button.dart';
 import 'package:uwall/widgets/custom_textfield.dart';
 import 'package:uwall/widgets/sign_in_widget.dart';
-
-import 'profile_screen.dart';
 
 class UploadScreen extends StatefulWidget {
   const UploadScreen({Key? key}) : super(key: key);
@@ -76,7 +73,7 @@ class _UploadPageState extends State<UploadPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Color.fromARGB(255, 29, 29, 29),
+          backgroundColor: const Color.fromARGB(255, 29, 29, 29),
           title: const Text("Please choose an option"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -122,8 +119,21 @@ class _UploadPageState extends State<UploadPage> {
   }
 
   void _cropImage(filePath) async {
-    CroppedFile? croppedImage = await ImageCropper()
-        .cropImage(sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
+    CroppedFile? croppedImage = await ImageCropper().cropImage(
+      sourcePath: filePath,
+      maxHeight: 1080,
+      maxWidth: 1080,
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Cropper',
+          // toolbarColor: secondaryColor,
+          activeControlsWidgetColor: primaryColor,
+          // toolbarWidgetColor: secondaryColor,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false,
+        ),
+      ],
+    );
 
     if (croppedImage != null) {
       setState(() {

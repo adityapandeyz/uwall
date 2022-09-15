@@ -22,6 +22,39 @@ class AboutAppScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
+                  'Powered by Flutter',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 11,
+                  ),
+
+                  //textAlign: TextAlign.,
+                ),
+                const SizedBox(height: 10),
+                const CircleAvatar(
+                  radius: 45,
+                  backgroundImage: AssetImage(
+                    'assets/logo/uwall_logo_512px.png',
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Version: 0.2.0+2',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                  ),
+                  //textAlign: TextAlign.,
+                ),
+                const Text(
+                  'BETA Release',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 11,
+                  ),
+                  //textAlign: TextAlign.,
+                ),
+                const SizedBox(height: 10),
+                const Text(
                   ' Developers:',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -44,17 +77,14 @@ class AboutAppScreen extends StatelessWidget {
                     ],
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.asset('assets/logo/dot.-150x150.png'),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'Version: 0.1.0+1',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                  ),
-                  //textAlign: TextAlign.,
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: 100,
+                        width: 100,
+                        child: Image.asset(
+                          'assets/logo/dot.-150x150.png',
+                        ),
+                      )),
                 ),
                 const SizedBox(height: 10),
                 const Text(

@@ -1,8 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:uwall/screens/about_app_screen.dart';
 import 'package:uwall/screens/download_screen.dart';
-import 'package:uwall/search/search_screen.dart';
+import 'package:uwall/screens/search_screen.dart';
 import 'package:uwall/utils/colors.dart';
 
 class FeedScreen extends StatelessWidget {
@@ -12,14 +13,22 @@ class FeedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Padding(
-          padding: EdgeInsets.only(left: 8.0, top: 8, bottom: 8, right: 0),
-          child: CircleAvatar(
-            radius: 13,
-            child: CircleAvatar(
-              radius: 12,
-              backgroundImage: AssetImage(
-                'assets/logo/uwall_logo_512px.png',
+        leading: Padding(
+          padding:
+              const EdgeInsets.only(left: 8.0, top: 8, bottom: 8, right: 0),
+          child: GestureDetector(
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const AboutAppScreen(),
+              ),
+            ),
+            child: const CircleAvatar(
+              radius: 13,
+              child: CircleAvatar(
+                radius: 12,
+                backgroundImage: AssetImage(
+                  'assets/logo/uwall_logo_512px.png',
+                ),
               ),
             ),
           ),

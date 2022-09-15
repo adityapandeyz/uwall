@@ -3,11 +3,26 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:uwall/widgets/custom_rectangle.dart';
 import 'package:uwall/widgets/custom_square_button.dart';
 
-final Uri _googlePlayServicesUrl =
-    Uri.parse('https://www.google.com/policies/privacy/');
+final Uri _googlePlayUrl = Uri.parse(
+    'https://play.google.com/store/apps/details?id=tech.dresolution.uwall');
 
-class SubmitFeedbackScreen extends StatelessWidget {
+class SubmitFeedbackScreen extends StatefulWidget {
   const SubmitFeedbackScreen({Key? key}) : super(key: key);
+
+  @override
+  State<SubmitFeedbackScreen> createState() => _SubmitFeedbackScreenState();
+}
+
+class _SubmitFeedbackScreenState extends State<SubmitFeedbackScreen> {
+  Future<void>? _launched;
+  Future<void> _launchInBrowser(Uri url) async {
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,13 +54,15 @@ class SubmitFeedbackScreen extends StatelessWidget {
               height: 100,
               icon: Icons.play_arrow_rounded,
               opensOutsideApp: true,
-              child: const Text(
+              ontap: () => setState(() {
+                _launched = _launchInBrowser(_googlePlayUrl);
+              }),
+              child: Text(
                 'Review on Google Play',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              ontap: () {},
             ),
             const SizedBox(
               height: 10,
@@ -62,7 +79,7 @@ _launchEmail() async {
     scheme: 'mailto',
     path: 'admin@dresolution.tech',
     query:
-        'subject=App Feedback&body=App Version 0.1.0+1', //add subject and body here
+        'subject=App Feedback&body=App Version 0.2.0+2', //add subject and body here
   );
   var url = params.toString();
 
@@ -73,8 +90,8 @@ _launchEmail() async {
   }
 }
 
-Future<void> _launchGooglePlayServices() async {
-  if (!await launchUrl(_googlePlayServicesUrl)) {
-    throw 'Could not launch $_googlePlayServicesUrl';
-  }
-}
+// Future<void> _launchGooglePlay() async {
+//   if (!await launchUrl(_googlePlayUrl)) {
+//     throw 'Could not launch $_googlePlayUrl';
+//   }
+// }

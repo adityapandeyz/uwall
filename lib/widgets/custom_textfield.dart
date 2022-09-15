@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:uwall/utils/colors.dart';
-import 'package:flutter/cupertino.dart';
 
 class CustomTextField extends StatelessWidget {
   final int lines;

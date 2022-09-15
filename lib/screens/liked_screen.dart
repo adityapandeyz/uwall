@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:uwall/screens/download_screen.dart';
+import 'package:uwall/widgets/empty_warning.dart';
 import 'package:uwall/widgets/sign_in_widget.dart';
 
 import '../utils/colors.dart';
@@ -123,6 +124,13 @@ class _FavouritesScreenState extends State<LikedScreen> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                       child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  if (snapshot.data.docs.isEmpty) {
+                    return const EmptyWarning(
+                      text: 'No Likes!',
+                      icon: Icons.thumb_up_alt_outlined,
                     );
                   }
 

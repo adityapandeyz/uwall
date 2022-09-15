@@ -4,9 +4,10 @@ import 'package:uwall/screens/category_screen.dart';
 import 'package:uwall/screens/home_screen.dart';
 import 'package:uwall/models/user.dart';
 import 'package:uwall/screens/profile_screen.dart';
+import 'package:uwall/utils/colors.dart';
 import 'package:uwall/widgets/custom_rectangle.dart';
 
-import '../screens/download_screen.dart';
+import 'download_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -120,6 +121,26 @@ class _SearchScreenState extends State<SearchScreen> {
                           .get(),
                       builder: (context, AsyncSnapshot snapshot) {
                         if (snapshot.hasData) {
+                          if (snapshot.data.docs.isEmpty) {
+                            return Center(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  // Icon(
+                                  //   Icons.no_photography_outlined,
+                                  //   size: 40,
+                                  // ),
+                                  Text(
+                                    'No Users!',
+                                    style: TextStyle(
+                                      color: lightGreyText,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
                           return ListView.builder(
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
@@ -216,13 +237,25 @@ class _SearchScreenState extends State<SearchScreen> {
                           .limit(1)
                           .get(),
                       builder: (context, AsyncSnapshot snapshot) {
-                        const Text(
-                          'No data...',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 102, 102, 102),
-                          ),
-                        );
                         if (snapshot.hasData) {
+                          if (snapshot.data.docs.isEmpty) {
+                            return Center(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  // Icon(
+                                  //   Icons.no_photography_outlined,
+                                  //   size: 40,
+                                  // ),
+                                  Text(
+                                    'No Categories!',
+                                    style: TextStyle(color: lightGreyText),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
                           return ListView.builder(
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
@@ -327,6 +360,26 @@ class _SearchScreenState extends State<SearchScreen> {
                           .get(),
                       builder: (context, AsyncSnapshot snapshot) {
                         if (snapshot.hasData) {
+                          if (snapshot.data.docs.isEmpty) {
+                            return Center(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  // Icon(
+                                  //   Icons.no_photography_outlined,
+                                  //   size: 40,
+                                  // ),
+                                  Text(
+                                    'No Wallpapers!',
+                                    style: TextStyle(
+                                      color: lightGreyText,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
                           return GridView.builder(
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
