@@ -26,10 +26,14 @@ class _AccountScreenState extends State<AccountScreen> {
   String? photo = "";
   final cores = SysInfo.cores;
   final int megaByte = 1024 * 1024;
-
-  bool isLoading = false;
-
+  bool isLoading = true;
   bool isUserLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkUserLoginState();
+  }
 
   checkUserLoginState() {
     if (FirebaseAuth.instance.currentUser != null) {
@@ -39,12 +43,6 @@ class _AccountScreenState extends State<AccountScreen> {
       getData();
     }
     return isUserLoggedIn;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    checkUserLoginState();
   }
 
   getData() async {
@@ -274,6 +272,7 @@ Virtual memory size: ${SysInfo.getVirtualMemorySize() ~/ megaByte} MB """,
                         ),
                         ontap: () {
                           FirebaseAuth.instance.signOut();
+                          showSnackBar(context, 'Logout successfully!');
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (_) => const HomeScreen(),

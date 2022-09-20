@@ -112,87 +112,89 @@ class _FavouritesScreenState extends State<LikedScreen> {
             appBar: AppBar(
               title: const Text('Liked'),
             ),
-            body: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('wallpapers')
-                    .where('likes',
-                        arrayContains: FirebaseAuth.instance.currentUser!.uid)
-                    .snapshots(),
-                builder: (context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
+            body: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('wallpapers')
+                  .where('likes',
+                      arrayContains: FirebaseAuth.instance.currentUser!.uid)
+                  .snapshots(),
+              builder: (context, AsyncSnapshot snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-                  if (snapshot.data.docs.isEmpty) {
-                    return const EmptyWarning(
-                      text: 'No Likes!',
-                      icon: Icons.thumb_up_alt_outlined,
-                    );
-                  }
+                if (snapshot.data.docs.isEmpty) {
+                  return const EmptyWarning(
+                    text: 'No Likes!',
+                    icon: Icons.thumb_up_alt_outlined,
+                  );
+                }
 
-                  return GridView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.docs.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisSpacing: 6,
-                      mainAxisSpacing: 6,
-                      crossAxisCount: 3,
-                      mainAxisExtent: 250,
-                    ),
-                    itemBuilder: (BuildContext context, int index) {
-                      if (snapshot.data!.docs.length != null) {
-                        return GestureDetector(
-                          onTap: (() {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => DownloadScreen(
-                                  wallpaperId: snapshot.data!.docs[index]
-                                      ['wallpaperId'],
-                                  downloads: snapshot.data!.docs[index]
-                                      ['downloads'],
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.docs.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisSpacing: 6,
+                        mainAxisSpacing: 6,
+                        crossAxisCount: 3,
+                        mainAxisExtent: 250,
+                      ),
+                      itemBuilder: (BuildContext context, int index) {
+                        if (snapshot.data!.docs.length != null) {
+                          return GestureDetector(
+                            onTap: (() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => DownloadScreen(
+                                    wallpaperId: snapshot.data!.docs[index]
+                                        ['wallpaperId'],
+                                    downloads: snapshot.data!.docs[index]
+                                        ['downloads'],
+                                  ),
                                 ),
+                              );
+                            }),
+                            // child: Text(postId.toString()),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: CachedNetworkImage(
+                                imageUrl: snapshot.data!.docs[index]['image'],
+                                placeholder: (context, url) =>
+                                    Container(color: secondaryColor),
+                                fit: BoxFit.cover,
                               ),
-                            );
-                          }),
-                          // child: Text(postId.toString()),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: CachedNetworkImage(
-                              imageUrl: snapshot.data!.docs[index]['image'],
-                              placeholder: (context, url) =>
-                                  Container(color: secondaryColor),
-                              fit: BoxFit.cover,
+                            ),
+
+                            // ClipRRect(
+                            //   borderRadius: BorderRadius.circular(8),
+                            //   child: Image.network(
+                            //     snapshot.data!.docs[index]['image'],
+                            //     fit: BoxFit.cover,
+                            //   ),
+                            // ),
+                          );
+                        }
+                        return const Center(
+                          child: Text(
+                            'Something went wrong...',
+                            style: TextStyle(
+                              fontSize: 20,
                             ),
                           ),
-
-                          // ClipRRect(
-                          //   borderRadius: BorderRadius.circular(8),
-                          //   child: Image.network(
-                          //     snapshot.data!.docs[index]['image'],
-                          //     fit: BoxFit.cover,
-                          //   ),
-                          // ),
                         );
-                      }
-                      return const Center(
-                        child: Text(
-                          'Something went wrong...',
-                          style: TextStyle(
-                            fontSize: 20,
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
+                      },
+                    ),
+                  ),
+                );
+              },
             )
 
             // const Align(

@@ -450,7 +450,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     if (snapshot.data.docs.isEmpty) {
                                       return const EmptyWarning(
                                         text: 'No Posts!',
-                                        icon: Icons.thumb_up_alt_outlined,
+                                        icon: Icons.no_photography_outlined,
                                       );
                                     }
                                     return GridView.builder(

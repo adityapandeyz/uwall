@@ -79,7 +79,7 @@ _launchEmail() async {
     scheme: 'mailto',
     path: 'admin@dresolution.tech',
     query:
-        'subject=App Feedback&body=App Version 0.2.0+2', //add subject and body here
+        'subject=App Feedback&body=App Version 0.3.0+3', //add subject and body here
   );
   var url = params.toString();
 

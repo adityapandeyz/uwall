@@ -317,79 +317,82 @@ class CategoryView extends StatelessWidget {
       appBar: AppBar(
         title: Text(heading),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8),
-        child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('wallpapers')
-              .where("category", isEqualTo: value.toString())
-              // .orderBy('downloads', descending: true)
-              .snapshots(),
-          builder: (context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('wallpapers')
+            .where("category", isEqualTo: value.toString())
+            // .orderBy('downloads', descending: true)
+            .snapshots(),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.connectionState == ConnectionState.active) {
+            if (!snapshot.hasData) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
-            } else if (snapshot.connectionState == ConnectionState.active) {
-              if (!snapshot.hasData) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.data.docs.isEmpty) {
-                return const EmptyWarning(
-                  text: 'No Posts!',
-                  icon: Icons.no_photography_sharp,
-                );
-              }
-
-              return GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: snapshot.data!.docs.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
-                  crossAxisCount: 3,
-                  mainAxisExtent: 250,
-                ),
-                itemBuilder: (BuildContext context, int index) {
-                  return GestureDetector(
-                    onTap: (() {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => DownloadScreen(
-                            wallpaperId: snapshot.data!.docs[index]
-                                ['wallpaperId'],
-                            downloads: snapshot.data!.docs[index]['downloads'],
-                          ),
-                        ),
-                      );
-                    }),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: CachedNetworkImage(
-                        imageUrl: snapshot.data!.docs[index]['image'],
-                        placeholder: (context, url) =>
-                            Container(color: secondaryColor),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  );
-                },
-              );
-            } else {
-              return const Center(
-                child: Text(
-                  'There is no tasks',
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
+            } else if (snapshot.data.docs.isEmpty) {
+              return const EmptyWarning(
+                text: 'No Posts!',
+                icon: Icons.no_photography_sharp,
               );
             }
-          },
-        ),
+
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: snapshot.data!.docs.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
+                    crossAxisCount: 3,
+                    mainAxisExtent: 250,
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    return GestureDetector(
+                      onTap: (() {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => DownloadScreen(
+                              wallpaperId: snapshot.data!.docs[index]
+                                  ['wallpaperId'],
+                              downloads: snapshot.data!.docs[index]
+                                  ['downloads'],
+                            ),
+                          ),
+                        );
+                      }),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: CachedNetworkImage(
+                          imageUrl: snapshot.data!.docs[index]['image'],
+                          placeholder: (context, url) =>
+                              Container(color: secondaryColor),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            );
+          } else {
+            return const Center(
+              child: Text(
+                'There is no tasks',
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+            );
+          }
+        },
       ),
     );
   }

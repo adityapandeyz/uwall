@@ -9,6 +9,7 @@ import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:uwall/screens/home_screen.dart';
 import 'package:uwall/screens/profile_screen.dart';
 import 'package:uwall/screens/liked_screen.dart';
+import 'package:uwall/utils/colors.dart';
 import 'package:uwall/utils/utils.dart';
 import 'package:uwall/widgets/custom_button.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -36,6 +37,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
 
   bool isUserLoggedIn = false;
   bool isLiked = false;
+  bool showDeleteButton = false;
 
   checkUserLoginState() {
     if (FirebaseAuth.instance.currentUser != null) {
@@ -51,10 +53,10 @@ class _DownloadScreenState extends State<DownloadScreen> {
   void initState() {
     super.initState();
     checkUserLoginState();
-    getPostTitle();
+    getPostData();
   }
 
-  getPostTitle() async {
+  getPostData() async {
     try {
       var postSnap1 = await FirebaseFirestore.instance
           .collection('wallpapers')
@@ -81,6 +83,14 @@ class _DownloadScreenState extends State<DownloadScreen> {
       isLiked = postSnap2
           .data()!['likes']
           .contains(FirebaseAuth.instance.currentUser!.uid);
+
+      if (postSnap2.data()!['uid'] == FirebaseAuth.instance.currentUser!.uid ||
+          FirebaseAuth.instance.currentUser!.uid ==
+              'bZW5S6L7Wdf2AI6I5YoXsFP8qY32') {
+        setState(() {
+          showDeleteButton = true;
+        });
+      }
 
       setState(() {});
     } catch (e) {
@@ -144,27 +154,167 @@ class _DownloadScreenState extends State<DownloadScreen> {
                         Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Row(
+                            // crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisSize: MainAxisSize.min,
+
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                snapshot.data!.docs[index]['fullName']
-                                    .toString(),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    snapshot.data!.docs[index]['fullName']
+                                        .toString(),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Container(
+                                            // height: 200,
+                                            width: 200,
+                                            child: Text(
+                                              snapshot.data!
+                                                  .docs[index]['description']
+                                                  .toString(),
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Color.fromARGB(
+                                                    87, 255, 255, 255),
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                               const SizedBox(
-                                width: 5,
+                                width: 40,
                               ),
-                              Text(
-                                snapshot.data!.docs[index]['description']
-                                    .toString(),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromARGB(87, 255, 255, 255),
-                                  fontSize: 12,
-                                ),
-                              ),
+                              showDeleteButton
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              backgroundColor:
+                                                  const Color.fromARGB(
+                                                      255, 29, 29, 29),
+                                              title: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: const [
+                                                  Text("Are you sure?"),
+                                                  Text(
+                                                    "This step will permanently delete this wallpaper!",
+                                                    style: TextStyle(
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                      color: Colors.red,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              content: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      CustomButton(
+                                                        text: 'Delete',
+                                                        onTap: () async {
+                                                          try {
+                                                            await FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'wallpapers')
+                                                                .doc(snapshot
+                                                                    .data!
+                                                                    .docs[index]
+                                                                        [
+                                                                        'wallpaperId']
+                                                                    .toString())
+                                                                .delete();
+
+                                                            showSnackBar(
+                                                                context,
+                                                                'Wallpaper deleted successfully!');
+
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pushReplacement(
+                                                              MaterialPageRoute(
+                                                                builder: (_) => ProfileScreen(
+                                                                    userId: snapshot
+                                                                        .data!
+                                                                        .docs[
+                                                                            index]
+                                                                            [
+                                                                            'uid']
+                                                                        .toString()),
+                                                              ),
+                                                            );
+                                                          } catch (err) {
+                                                            showSnackBar(
+                                                              context,
+                                                              err.toString(),
+                                                            );
+                                                          }
+                                                        },
+                                                      ),
+                                                      const SizedBox(
+                                                        width: 20,
+                                                      ),
+                                                      TextButton(
+                                                        child: const Text(
+                                                          'Cancel',
+                                                          style: TextStyle(
+                                                            color: primaryColor,
+                                                          ),
+                                                        ),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: const Icon(Icons.delete),
+                                    )
+                                  : Container(),
                             ],
                           ),
                         ),
@@ -383,7 +533,8 @@ class _DownloadScreenState extends State<DownloadScreen> {
                                                 context, error.toString());
                                           }
                                         },
-                                      ))
+                                      ),
+                              )
                             : Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: CustomRectangle(
@@ -430,7 +581,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
                                       );
 
                                       showSnackBar(
-                                          context, 'Image Saved to Gallery');
+                                          context, 'Image saved to gallery!');
 
                                       total = widget.downloads! + 1;
 
@@ -460,6 +611,9 @@ class _DownloadScreenState extends State<DownloadScreen> {
                                 ),
                               )
                             : Container(),
+                        const SizedBox(
+                          height: 30,
+                        )
                       ],
                     );
                   },

@@ -48,6 +48,8 @@ class UploadPage extends StatefulWidget {
 }
 
 class _UploadPageState extends State<UploadPage> {
+  final formKey = GlobalKey<FormState>();
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
   File? imagefile;
   String? imageUrl;
@@ -195,8 +197,16 @@ class _UploadPageState extends State<UploadPage> {
       showSnackBar(context, 'Please select an image!');
       Navigator.canPop(context) ? Navigator.pop(context) : null;
       return;
-    } else if (_category == null) {
+    } else if (_category.toString().isEmpty) {
       showSnackBar(context, 'Please choose the category!');
+      Navigator.canPop(context) ? Navigator.pop(context) : null;
+      return;
+    } else if (_titleController.text.isEmpty) {
+      showSnackBar(context, 'Please enter the title!');
+      Navigator.canPop(context) ? Navigator.pop(context) : null;
+      return;
+    } else if (_descriptionController.text.isEmpty) {
+      showSnackBar(context, 'Please enter description');
       Navigator.canPop(context) ? Navigator.pop(context) : null;
       return;
     }
@@ -221,7 +231,7 @@ class _UploadPageState extends State<UploadPage> {
           'createdAt': DateTime.now(),
         },
       );
-      showSnackBar(context, 'Wallpaper uploaded successfully');
+      showSnackBar(context, 'Wallpaper uploaded successfully!');
       Navigator.canPop(context) ? Navigator.pop(context) : null;
       imagefile = null;
       Navigator.pushReplacement(
@@ -245,76 +255,87 @@ class _UploadPageState extends State<UploadPage> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
-          child: Column(
-            children: [
-              Center(
-                child: GestureDetector(
-                  onTap: () {
-                    _showImageDialoge();
-                  },
-                  child: Container(
-                    child: imagefile != null
-                        ? Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            width: double.infinity,
-                            height: MediaQuery.of(context).size.height / 3.5,
-                            child: Image(image: Image.file(imagefile!).image),
-                          )
+          child: Form(
+            key: formKey,
+            child: Column(
+              children: [
+                Center(
+                  child: GestureDetector(
+                    onTap: () {
+                      _showImageDialoge();
+                    },
+                    child: Container(
+                      child: imagefile != null
+                          ? Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              width: double.infinity,
+                              height: MediaQuery.of(context).size.height / 3.5,
+                              child: Image(image: Image.file(imagefile!).image),
+                            )
 
-                        //  CircleAvatar(
-                        //     radius: 64,
-                        //     backgroundImage: Image.file(imagefile!).image,
-                        //   )
-                        : Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(12),
+                          //  CircleAvatar(
+                          //     radius: 64,
+                          //     backgroundImage: Image.file(imagefile!).image,
+                          //   )
+                          : Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              width: double.infinity,
+                              height: MediaQuery.of(context).size.height / 3.5,
+                              child: Icon(
+                                Icons.add_a_photo_outlined,
+                                color: Colors.grey[800],
+                                size: 40,
+                              ),
                             ),
-                            width: double.infinity,
-                            height: MediaQuery.of(context).size.height / 3.5,
-                            child: Icon(
-                              Icons.add_a_photo_outlined,
-                              color: Colors.grey[800],
-                              size: 40,
-                            ),
-                          ),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              CustomTextField(
-                lines: 1,
-                controller: _titleController,
-                hintText: 'Title',
-                obsecureText: false,
-              ),
-              const SizedBox(height: 10),
-              CustomTextField(
-                lines: 4,
-                controller: _descriptionController,
-                hintText: 'Description...',
-                obsecureText: false,
-              ),
-              const SizedBox(height: 10),
-              SmartSelect<String>.single(
-                title: 'Category',
-                selectedValue: _category,
-                choiceItems: days,
-                onChange: (selected) => setState(
-                  () => _category = selected.value,
+                const SizedBox(height: 10),
+                CustomTextField(
+                  lines: 1,
+                  controller: _titleController,
+                  hintText: 'Title',
+                  obsecureText: false,
+                  customTextFieldValidator: (value) =>
+                      value != null && value.length < 2
+                          ? "This field can't be null"
+                          : null,
                 ),
-              ),
-              const SizedBox(height: 20),
-              CustomButton(
-                text: 'UPLOAD',
-                onTap: () {
-                  _upload_image();
-                },
-              )
-            ],
+                const SizedBox(height: 10),
+                CustomTextField(
+                  lines: 4,
+                  controller: _descriptionController,
+                  hintText: 'Description...',
+                  obsecureText: false,
+                  customTextFieldValidator: (value) =>
+                      value != null && value.length < 2
+                          ? "This field can't be null"
+                          : null,
+                ),
+                const SizedBox(height: 10),
+                SmartSelect<String>.single(
+                  title: 'Category',
+                  selectedValue: _category,
+                  choiceItems: days,
+                  onChange: (selected) => setState(
+                    () => _category = selected.value,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                CustomButton(
+                  text: 'UPLOAD',
+                  onTap: () {
+                    _upload_image();
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),

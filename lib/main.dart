@@ -53,9 +53,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => UserProvider(),
         ),
-        ChangeNotifierProvider(
-          create: (_) => LoginStateProvider(),
-        ),
+        // ChangeNotifierProvider(
+        //   create: (_) => LoginStateProvider(),
+        // ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

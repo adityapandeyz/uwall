@@ -136,6 +136,7 @@ class _SigninScreenState extends State<SigninScreen> {
         email: _emailController.text, password: _passwordController.text);
     if (res == 'success') {
       // ignore: use_build_context_synchronously
+      showSnackBar(context, 'Welcome back...');
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const HomeScreen(),
