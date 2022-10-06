@@ -2,12 +2,16 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:uwall/screens/about_app_screen.dart';
 import 'package:uwall/screens/download_screen.dart';
 import 'package:uwall/screens/search_screen.dart';
 import 'package:uwall/utils/colors.dart';
 import 'package:uwall/utils/utils.dart';
 import 'package:uwall/widgets/sign_in_widget.dart';
+
+import '../widgets/custom_rectangle.dart';
+import 'category_screen.dart';
 
 class FeedScreen extends StatelessWidget {
   const FeedScreen({Key? key}) : super(key: key);
@@ -103,6 +107,78 @@ class PopularScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // FutureBuilder<QuerySnapshot>(
+            //   future: FirebaseFirestore.instance
+            //       .collection('wallpapers')
+            //       .limit(1)
+            //       .get(),
+            //   builder: (context, AsyncSnapshot snapshot) {
+            //     if (snapshot.hasData) {
+            //       return ListView.builder(
+            //         physics: const NeverScrollableScrollPhysics(),
+            //         shrinkWrap: true,
+            //         itemCount: snapshot.data!.docs.length,
+            //         itemBuilder: (context, index) {
+            //           return Padding(
+            //             padding: const EdgeInsets.only(
+            //               top: 8,
+            //             ),
+            //             //   child: ImageSlideshow(
+            //             //     width: double.infinity,
+            //             //     height: 200,
+            //             //     initialPage: 0,
+            //             //     indicatorColor: Colors.blue,
+            //             //     indicatorBackgroundColor: Colors.grey,
+            //             //     onPageChanged: (value) {
+            //             //       print('Page changed: $value');
+            //             //     },
+            //             //     autoPlayInterval: 3000,
+            //             //     isLoop: true,
+            //             //     children: [
+            //             //       Image.asset(
+            //             //         snapshot.data!.docs[index]['image'],
+            //             //         fit: BoxFit.cover,
+            //             //       ),
+            //             //     ],
+            //             //   ),
+            //             // );
+
+            //             child: CustomRectangle(
+            //               leadingIcon: false,
+            //               ontap: () => Navigator.of(context).push(
+            //                 MaterialPageRoute(
+            //                   builder: (_) => CategoryView(
+            //                     heading: snapshot.data!.docs[index]['category']
+            //                         .toString(),
+            //                     value: snapshot.data!.docs[index]['category']
+            //                         .toString()
+            //                         .toLowerCase(),
+            //                   ),
+            //                 ),
+            //               ),
+            //               child: Container(
+            //                 child: Row(
+            //                   children: [
+            //                     Text(
+            //                       snapshot.data!.docs[index]['category'],
+            //                       style: const TextStyle(
+            //                         fontWeight: FontWeight.bold,
+            //                       ),
+            //                     ),
+            //                   ],
+            //                 ),
+            //               ),
+            //             ),
+            //           );
+            //         },
+            //       );
+            //     }
+
+            //     return const Center(
+            //       child: CircularProgressIndicator(),
+            //     );
+            //   },
+            // ),
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 10),
               child: Text(
@@ -343,6 +419,6 @@ class _FollowedScreenState extends State<FollowedScreen> {
               ),
             ),
           )
-        : SignInWidget();
+        : const SignInWidget();
   }
 }

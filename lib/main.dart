@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-import 'package:uwall/providers/login_state_provider.dart';
 import 'package:uwall/providers/user_provider.dart';
 import 'package:uwall/screens/home_screen.dart';
 import 'utils/colors.dart';

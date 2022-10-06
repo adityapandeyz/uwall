@@ -39,20 +39,20 @@ class AboutAppScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  'Version: 0.3.0+3',
+                  'Version: 0.3.1+4',
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                   ),
                   //textAlign: TextAlign.,
                 ),
-                const Text(
-                  'BETA Release',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 11,
-                  ),
-                  //textAlign: TextAlign.,
-                ),
+                // const Text(
+                //   'BETA Release',
+                //   style: TextStyle(
+                //     fontWeight: FontWeight.w500,
+                //     fontSize: 11,
+                //   ),
+                //   //textAlign: TextAlign.,
+                // ),
                 const SizedBox(height: 10),
                 const Text(
                   ' Developers:',

@@ -240,7 +240,7 @@ _launchEmail() async {
   final Uri params = Uri(
     scheme: 'mailto',
     path: 'admin@dresolution.tech',
-    query: 'body=App Version 0.2.0+2', //add subject and body here
+    query: 'body=App Version 0.3.1+4', //add subject and body here
   );
   var url = params.toString();
 
