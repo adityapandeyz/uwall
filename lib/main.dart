@@ -1,31 +1,21 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:internet_popup/internet_popup.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-import 'package:uwall/providers/user_provider.dart';
-import 'package:uwall/screens/home_screen.dart';
+import '../providers/user_provider.dart';
+import '../screens/home_screen.dart';
 import 'utils/colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (kIsWeb) {
-    await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "AIzaSyCP5ikTZ084MC9gpre8ViDKFvm5IhQC2RY",
-        appId: "1:211849169385:web:961bfc73325f8d9a56a378",
-        messagingSenderId: "211849169385",
-        projectId: "uwall-dotresolution",
-        storageBucket: "uwall-dotresolution.appspot.com",
-      ),
-    );
-  } else {
-    await Firebase.initializeApp();
-  }
+
+  await Firebase.initializeApp();
+
   runApp(const MyApp());
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -82,7 +72,7 @@ class MyApp extends StatelessWidget {
         home: AnimatedSplashScreen(
           duration: 3000,
           splashIconSize: 175,
-          splash: 'assets/logo/uwall_logo_512px.png',
+          splash: 'assets/logo/ic_launcher/play_store_512.png',
           nextScreen: const NextScreen(),
           splashTransition: SplashTransition.fadeTransition,
           pageTransitionType: PageTransitionType.fade,
@@ -93,8 +83,19 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class NextScreen extends StatelessWidget {
+class NextScreen extends StatefulWidget {
   const NextScreen({Key? key}) : super(key: key);
+
+  @override
+  State<NextScreen> createState() => _NextScreenState();
+}
+
+class _NextScreenState extends State<NextScreen> {
+  @override
+  void initState() {
+    super.initState();
+    InternetPopup().initialize(context: context);
+  }
 
   @override
   Widget build(BuildContext context) {

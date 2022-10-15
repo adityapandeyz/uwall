@@ -5,10 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:uwall/auth/verify_email_screen.dart';
-import 'package:uwall/resources/auth_methods.dart';
-import 'package:uwall/utils/colors.dart';
-import 'package:uwall/utils/utils.dart';
+import '../auth/verify_email_screen.dart';
+import '../resources/auth_methods.dart';
+import '../utils/colors.dart';
+import '../utils/utils.dart';
 
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_textfield.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:uwall/utils/colors.dart';
+import '../utils/colors.dart';
 
 class AboutAppScreen extends StatelessWidget {
   const AboutAppScreen({Key? key}) : super(key: key);
@@ -34,12 +34,12 @@ class AboutAppScreen extends StatelessWidget {
                 const CircleAvatar(
                   radius: 45,
                   backgroundImage: AssetImage(
-                    'assets/logo/uwall_logo_512px.png',
+                    'assets/logo/ic_launcher/play_store_512.png',
                   ),
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  'Version: 0.3.1+4',
+                  'Version: 0.3.5+8',
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                   ),

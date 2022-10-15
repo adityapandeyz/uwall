@@ -7,13 +7,13 @@ import 'package:flutter_awesome_select/flutter_awesome_select.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
-import 'package:uwall/resources/storage_methods.dart';
-import 'package:uwall/screens/home_screen.dart';
-import 'package:uwall/utils/colors.dart';
-import 'package:uwall/utils/utils.dart';
-import 'package:uwall/widgets/custom_button.dart';
-import 'package:uwall/widgets/custom_textfield.dart';
-import 'package:uwall/widgets/sign_in_widget.dart';
+import '../resources/storage_methods.dart';
+import '../screens/home_screen.dart';
+import '../utils/colors.dart';
+import '../utils/utils.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/custom_textfield.dart';
+import '../widgets/sign_in_widget.dart';
 
 class UploadScreen extends StatefulWidget {
   const UploadScreen({Key? key}) : super(key: key);
@@ -36,7 +36,13 @@ class _UploadScreenState extends State<UploadScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return checkUserLoginState() ? const UploadPage() : SignInWidget();
+    return checkUserLoginState()
+        ? const UploadPage()
+        : Scaffold(
+            appBar: AppBar(
+              title: Text('Upload'),
+            ),
+            body: SignInWidget());
   }
 }
 

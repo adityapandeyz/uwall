@@ -4,12 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
-import 'package:uwall/screens/home_screen.dart';
-import 'package:uwall/utils/utils.dart';
-import 'package:uwall/widgets/custom_rectangle.dart';
-import 'package:uwall/widgets/empty_warning.dart';
-import 'package:uwall/widgets/sign_in_widget.dart';
-import 'package:uwall/widgets/square_box.dart';
+import '../screens/home_screen.dart';
+import '../utils/utils.dart';
+import '../widgets/custom_rectangle.dart';
+import '../widgets/empty_warning.dart';
+import '../widgets/sign_in_widget.dart';
+import '../widgets/square_box.dart';
 
 import '../auth/signin_screen.dart';
 import '../utils/colors.dart';

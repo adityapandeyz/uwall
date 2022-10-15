@@ -6,14 +6,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
-import 'package:uwall/screens/home_screen.dart';
-import 'package:uwall/screens/profile_screen.dart';
-import 'package:uwall/screens/liked_screen.dart';
-import 'package:uwall/utils/colors.dart';
-import 'package:uwall/utils/utils.dart';
-import 'package:uwall/widgets/custom_button.dart';
+import '../screens/home_screen.dart';
+import '../screens/profile_screen.dart';
+import '../screens/liked_screen.dart';
+import '../utils/colors.dart';
+import '../utils/utils.dart';
+import '../widgets/custom_button.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:uwall/widgets/custom_rectangle.dart';
+import '../widgets/custom_rectangle.dart';
 
 import '../auth/signin_screen.dart';
 

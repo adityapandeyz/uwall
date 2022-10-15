@@ -2,16 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
-import 'package:uwall/screens/about_app_screen.dart';
-import 'package:uwall/screens/download_screen.dart';
-import 'package:uwall/screens/search_screen.dart';
-import 'package:uwall/utils/colors.dart';
-import 'package:uwall/utils/utils.dart';
-import 'package:uwall/widgets/sign_in_widget.dart';
-
-import '../widgets/custom_rectangle.dart';
-import 'category_screen.dart';
+import '../screens/about_app_screen.dart';
+import '../screens/download_screen.dart';
+import '../screens/search_screen.dart';
+import '../utils/colors.dart';
+import '../utils/utils.dart';
+import '../widgets/sign_in_widget.dart';
 
 class FeedScreen extends StatelessWidget {
   const FeedScreen({Key? key}) : super(key: key);
@@ -36,7 +32,7 @@ class FeedScreen extends StatelessWidget {
                   child: CircleAvatar(
                     radius: 12,
                     backgroundImage: AssetImage(
-                      'assets/logo/uwall_logo_512px.png',
+                      'assets/logo/ic_launcher/play_store_512.png',
                     ),
                   ),
                 ),

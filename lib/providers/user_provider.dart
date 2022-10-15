@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
-import 'package:uwall/models/user.dart';
-import 'package:uwall/resources/auth_methods.dart';
+import '../models/user.dart';
+import '../resources/auth_methods.dart';
 
 class UserProvider with ChangeNotifier {
   User? _user;

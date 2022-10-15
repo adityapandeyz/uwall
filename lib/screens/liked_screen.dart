@@ -2,9 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:uwall/screens/download_screen.dart';
-import 'package:uwall/widgets/empty_warning.dart';
-import 'package:uwall/widgets/sign_in_widget.dart';
+import '../screens/download_screen.dart';
+import '../widgets/empty_warning.dart';
+import '../widgets/sign_in_widget.dart';
 
 import '../utils/colors.dart';
 

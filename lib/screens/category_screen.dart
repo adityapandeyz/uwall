@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:parallax_animation/parallax_animation.dart';
-import 'package:uwall/screens/download_screen.dart';
-import 'package:uwall/utils/colors.dart';
-import 'package:uwall/widgets/empty_warning.dart';
+import '../screens/download_screen.dart';
+import '../utils/colors.dart';
+import '../widgets/empty_warning.dart';
 
 class PhotoItem {
   final String image;
