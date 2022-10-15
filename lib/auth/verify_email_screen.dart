@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:uwall/screens/home_screen.dart';
-import 'package:uwall/utils/utils.dart';
-import 'package:uwall/widgets/custom_button.dart';
+import '../screens/home_screen.dart';
+import '../utils/utils.dart';
+import '../widgets/custom_button.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
   const VerifyEmailScreen({Key? key}) : super(key: key);

@@ -1,12 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:uwall/auth/forgot_password_screen.dart';
-import 'package:uwall/auth/signup_screen.dart';
-import 'package:uwall/resources/auth_methods.dart';
-import 'package:uwall/screens/home_screen.dart';
-import 'package:uwall/utils/utils.dart';
-import 'package:uwall/widgets/custom_button.dart';
+import '../auth/forgot_password_screen.dart';
+import '../auth/signup_screen.dart';
+import '../resources/auth_methods.dart';
+import '../screens/home_screen.dart';
+import '../utils/utils.dart';
+import '../widgets/custom_button.dart';
 import 'package:email_validator/email_validator.dart';
 
 import '../../widgets/custom_textfield.dart';

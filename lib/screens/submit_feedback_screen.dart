@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:uwall/widgets/custom_rectangle.dart';
-import 'package:uwall/widgets/custom_square_button.dart';
+import '../widgets/custom_rectangle.dart';
 
 final Uri _googlePlayUrl = Uri.parse(
     'https://play.google.com/store/apps/details?id=tech.dresolution.uwall');
@@ -79,7 +78,7 @@ _launchEmail() async {
     scheme: 'mailto',
     path: 'admin@dresolution.tech',
     query:
-        'subject=App Feedback&body=App Version 0.3.1+4', //add subject and body here
+        'subject=App Feedback&body=Uwall Version 00.3.5+8', //add subject and body here
   );
   var url = params.toString();
 

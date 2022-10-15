@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:uwall/screens/category_screen.dart';
-import 'package:uwall/screens/home_screen.dart';
-import 'package:uwall/models/user.dart';
-import 'package:uwall/screens/profile_screen.dart';
-import 'package:uwall/utils/colors.dart';
-import 'package:uwall/widgets/custom_rectangle.dart';
+import '../screens/category_screen.dart';
+import '../screens/home_screen.dart';
+import '../screens/profile_screen.dart';
+import '../utils/colors.dart';
+import '../widgets/custom_rectangle.dart';
 
 import 'download_screen.dart';
 

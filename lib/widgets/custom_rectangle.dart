@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:uwall/utils/colors.dart';
+import '../utils/colors.dart';
 
 class CustomRectangle extends StatelessWidget {
   final double height;

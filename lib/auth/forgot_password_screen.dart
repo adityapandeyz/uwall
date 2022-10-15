@@ -1,7 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:uwall/utils/utils.dart';
+import '../utils/utils.dart';
 
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_textfield.dart';
