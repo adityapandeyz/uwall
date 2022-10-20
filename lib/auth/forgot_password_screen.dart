@@ -62,7 +62,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ),
                     const SizedBox(height: 18),
                     CustomTextField(
-                      lines: 1,
+                      textInputType: TextInputType.emailAddress,
+                      autofocus: true,
+                      textInputAction: TextInputAction.done,
                       controller: emailController,
                       hintText: 'Email',
                       obsecureText: false,

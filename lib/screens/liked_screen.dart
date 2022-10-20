@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +5,7 @@ import '../screens/download_screen.dart';
 import '../widgets/empty_warning.dart';
 import '../widgets/sign_in_widget.dart';
 
-import '../utils/colors.dart';
+import '../widgets/thumbnail_widget.dart';
 
 class LikedScreen extends StatefulWidget {
   const LikedScreen({Key? key}) : super(key: key);
@@ -132,67 +131,86 @@ class _FavouritesScreenState extends State<LikedScreen> {
                   );
                 }
 
-                return SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: snapshot.data!.docs.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisSpacing: 6,
-                        mainAxisSpacing: 6,
-                        crossAxisCount: 3,
-                        mainAxisExtent: 250,
-                      ),
-                      itemBuilder: (BuildContext context, int index) {
-                        if (snapshot.data!.docs.length != null) {
-                          return GestureDetector(
-                            onTap: (() {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => DownloadScreen(
-                                    wallpaperId: snapshot.data!.docs[index]
-                                        ['wallpaperId'],
-                                    downloads: snapshot.data!.docs[index]
-                                        ['downloads'],
-                                  ),
-                                ),
-                              );
-                            }),
-                            // child: Text(postId.toString()),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: CachedNetworkImage(
-                                imageUrl: snapshot.data!.docs[index]['image'],
-                                placeholder: (context, url) =>
-                                    Container(color: secondaryColor),
-                                fit: BoxFit.cover,
+                return GridView.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  padding: const EdgeInsets.all(8),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisSpacing: 6,
+                    mainAxisSpacing: 6,
+                    crossAxisCount: 3,
+                    mainAxisExtent: 250,
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    if (snapshot.data!.docs.length != null) {
+                      return ThubmnailWidget(
+                        image: snapshot.data!.docs[index]['image'],
+                        title: snapshot.data!.docs[index]['title'],
+                        downloads: snapshot.data!.docs[index]['downloads'],
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => DownloadScreen(
+                                wallpaperId: snapshot.data!.docs[index]
+                                    ['wallpaperId'],
+                                downloads: snapshot.data!.docs[index]
+                                    ['downloads'],
                               ),
                             ),
-
-                            // ClipRRect(
-                            //   borderRadius: BorderRadius.circular(8),
-                            //   child: Image.network(
-                            //     snapshot.data!.docs[index]['image'],
-                            //     fit: BoxFit.cover,
-                            //   ),
-                            // ),
                           );
-                        }
-                        return const Center(
-                          child: Text(
-                            'Something went wrong...',
-                            style: TextStyle(
-                              fontSize: 20,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                        },
+                      );
+                      // return GestureDetector(
+                      //   onTap: (() {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder: (_) => DownloadScreen(
+                      //           wallpaperId: snapshot.data!.docs[index]
+                      //               ['wallpaperId'],
+                      //           downloads: snapshot.data!.docs[index]
+                      //               ['downloads'],
+                      //         ),
+                      //       ),
+                      //     );
+                      //   }),
+                      //   // child: Text(postId.toString()),
+
+                      //   // child: ClipRRect(
+                      //   //   borderRadius: BorderRadius.circular(8),
+                      //   //   child: CachedNetworkImage(
+                      //   //     imageUrl: snapshot.data!.docs[index]['image'],
+                      //   //     placeholder: (context, url) =>
+                      //   //         Container(color: secondaryColor),
+                      //   //     fit: BoxFit.cover,
+                      //   //   ),
+                      //   // ),
+
+                      //   // ClipRRect(
+                      //   //   borderRadius: BorderRadius.circular(8),
+                      //   //   child: Image.network(
+                      //   //     snapshot.data!.docs[index]['image'],
+                      //   //     fit: BoxFit.cover,
+                      //   //   ),
+                      //   // ),
+
+                      //   child: ThubmnailWidget(
+                      //     image: snapshot.data!.docs[index]['image'],
+                      //     title: snapshot.data!.docs[index]['title'],
+                      //     downloads: snapshot.data!.docs[index]
+                      //         ['downloads'],
+                      //   ),
+                      // );
+                    }
+                    return const Center(
+                      child: Text(
+                        'Something went wrong...',
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
             )

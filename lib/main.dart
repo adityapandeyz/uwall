@@ -66,20 +66,89 @@ class MyApp extends StatelessWidget {
             elevation: 0,
             centerTitle: false,
             color: secondaryColor,
-            titleTextStyle: GoogleFonts.getFont('Montserrat'),
+            titleTextStyle: GoogleFonts.getFont(
+              'Montserrat',
+              textStyle: const TextStyle(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
+          pageTransitionsTheme: const PageTransitionsTheme(
+            builders: {
+              TargetPlatform.android: CupertinoPageTransitionsBuilder()
+            },
+          ),
+          //platform: TargetPlatform.iOS,
+          // iconTheme:
         ),
+        scrollBehavior: const ScrollBehaviorModified(),
+
+        //   ScrollPhysics()
+        //  ),
+
         home: AnimatedSplashScreen(
           duration: 3000,
           splashIconSize: 175,
           splash: 'assets/logo/ic_launcher/play_store_512.png',
           nextScreen: const NextScreen(),
           splashTransition: SplashTransition.fadeTransition,
-          pageTransitionType: PageTransitionType.fade,
+          pageTransitionType: PageTransitionType.rightToLeft,
           backgroundColor: const Color.fromARGB(255, 0, 0, 0),
         ),
       ),
     );
+  }
+}
+
+// class ScrollBehaviorModified extends CupertinoScrollBehavior {
+//   @override
+//   ScrollPhysics getScrollPhysics(BuildContext context) {
+//     return CustomScrollPhysics();
+//   }
+
+//   @override
+//   Widget buildOverscrollIndicator(
+//       BuildContext context, Widget child, ScrollableDetails details) {
+//     return StretchingOverscrollIndicator(
+//       axisDirection: details.direction,
+//       child: child,
+//     );
+//   }
+// }
+
+// class CustomScrollPhysics extends ClampingScrollPhysics {
+//   @override
+//   Simulation? createBallisticSimulation(
+//       ScrollMetrics position, double velocity) {
+//     final Tolerance tolerance = this.tolerance;
+//     if (velocity.abs() >= tolerance.velocity || position.outOfRange) {
+//       return BouncingScrollSimulation(
+//         spring: spring,
+//         position: position.pixels,
+//         velocity: velocity,
+//         leadingExtent: position.minScrollExtent,
+//         trailingExtent: position.maxScrollExtent,
+//         tolerance: tolerance,
+//       );
+//     }
+//     return null;
+//   }
+// }
+
+class ScrollBehaviorModified extends ScrollBehavior {
+  const ScrollBehaviorModified();
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) {
+    switch (getPlatform(context)) {
+      case TargetPlatform.iOS:
+      case TargetPlatform.macOS:
+      case TargetPlatform.android:
+        return const BouncingScrollPhysics();
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.windows:
+        return const ClampingScrollPhysics();
+    }
   }
 }
 

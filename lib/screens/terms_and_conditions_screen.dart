@@ -154,7 +154,7 @@ _launchEmail() async {
   final Uri params = Uri(
     scheme: 'mailto',
     path: 'admin@dresolution.tech',
-    query: 'body=Uwall Version 0.3.5+8', //add subject and body here
+    query: 'body=Uwall Version 0.4.0+9', //add subject and body here
   );
   var url = params.toString();
 

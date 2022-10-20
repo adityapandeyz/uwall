@@ -12,6 +12,7 @@ import '../utils/utils.dart';
 
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_textfield.dart';
+import '../widgets/popover.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({
@@ -44,59 +45,84 @@ class _SignUpWidgetState extends State<SignupScreen> {
   }
 
   void _showImageDialoge() {
-    showDialog(
+    // showDialog(
+    //   context: context,
+    //   builder: (context) {
+    //     return AlertDialog(
+    //       backgroundColor: const Color.fromARGB(255, 29, 29, 29),
+    //       title: const Text("Please choose an option"),
+    //       content: Column(
+    //         mainAxisSize: MainAxisSize.min,
+    //         children: [
+    //           Row(
+    //             mainAxisAlignment: MainAxisAlignment.center,
+    //             crossAxisAlignment: CrossAxisAlignment.center,
+    //             mainAxisSize: MainAxisSize.min,
+    //             children: [
+    //               InkWell(
+    //                 onTap: (() {
+    //                   _getFromGallery();
+    //                 }),
+    //                 child: Container(
+    //                   height: 80,
+    //                   width: 80,
+    //                   decoration: BoxDecoration(
+    //                     color: Colors.grey,
+    //                     shape: BoxShape.rectangle,
+    //                     borderRadius: BorderRadius.circular(12),
+    //                   ),
+    //                   child: const Icon(
+    //                     Icons.image_rounded,
+    //                     size: 40,
+    //                   ),
+    //                 ),
+    //               ),
+    //               const SizedBox(width: 20),
+    //               InkWell(
+    //                 onTap: (() {
+    //                   _getFromCamera();
+    //                 }),
+    //                 child: Container(
+    //                   height: 80,
+    //                   width: 80,
+    //                   decoration: BoxDecoration(
+    //                     color: Colors.grey,
+    //                     shape: BoxShape.rectangle,
+    //                     borderRadius: BorderRadius.circular(12),
+    //                   ),
+    //                   child: const Icon(
+    //                     Icons.camera_alt_rounded,
+    //                     size: 40,
+    //                   ),
+    //                 ),
+    //               ),
+    //             ],
+    //           )
+    //         ],
+    //       ),
+    //     );
+    //   },
+    // );
+
+    showModalBottomSheet<int>(
+      backgroundColor: Colors.transparent,
       context: context,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: const Color.fromARGB(255, 29, 29, 29),
-          title: const Text("Please choose an option"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
+        return Popover(
+          child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  InkWell(
-                    onTap: (() {
-                      _getFromGallery();
-                    }),
-                    child: Container(
-                      height: 80,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.image_rounded,
-                        size: 40,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  InkWell(
-                    onTap: (() {
-                      _getFromCamera();
-                    }),
-                    child: Container(
-                      height: 80,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.camera_alt_rounded,
-                        size: 40,
-                      ),
-                    ),
-                  ),
-                ],
-              )
+              buildListItem(
+                context,
+                title: 'Select from gallery',
+                leading: Icons.image_rounded,
+                onpressed: _getFromGallery,
+              ),
+              buildListItem(
+                context,
+                title: 'Take a photo',
+                leading: Icons.camera_enhance_rounded,
+                onpressed: _getFromCamera,
+              ),
             ],
           ),
         );
@@ -190,6 +216,8 @@ class _SignUpWidgetState extends State<SignupScreen> {
                     ),
                     const SizedBox(height: 20),
                     CustomTextField(
+                      autofocus: true,
+                      textInputAction: TextInputAction.next,
                       lines: 1,
                       controller: _fullNameController,
                       hintText: 'Full Name',
@@ -201,7 +229,8 @@ class _SignUpWidgetState extends State<SignupScreen> {
                     ),
                     const SizedBox(height: 10),
                     CustomTextField(
-                      lines: 1,
+                      textInputAction: TextInputAction.next,
+                      textInputType: TextInputType.emailAddress,
                       controller: _emailController,
                       hintText: 'Email',
                       obsecureText: false,
@@ -212,6 +241,7 @@ class _SignUpWidgetState extends State<SignupScreen> {
                     ),
                     const SizedBox(height: 10),
                     CustomTextField(
+                      textInputAction: TextInputAction.done,
                       lines: 1,
                       controller: _passwordController,
                       hintText: 'Password',

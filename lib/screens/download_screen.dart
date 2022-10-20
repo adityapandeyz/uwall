@@ -1,11 +1,17 @@
-import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crop_your_image/crop_your_image.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:uwall/widgets/thumbnail_widget.dart';
+import 'package:wallpaper_manager_flutter/wallpaper_manager_flutter.dart';
+
 import '../screens/home_screen.dart';
 import '../screens/profile_screen.dart';
 import '../screens/liked_screen.dart';
@@ -16,6 +22,7 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import '../widgets/custom_rectangle.dart';
 
 import '../auth/signin_screen.dart';
+import '../widgets/popover.dart';
 
 class DownloadScreen extends StatefulWidget {
   final String wallpaperId;
@@ -38,6 +45,14 @@ class _DownloadScreenState extends State<DownloadScreen> {
   bool isUserLoggedIn = false;
   bool isLiked = false;
   bool showDeleteButton = false;
+
+  final _controller = CropController();
+
+  _askPermission() async {
+    /*await PermissionHandler()
+        .checkPermissionStatus(Permission.storage);*/
+    Permission.storage;
+  }
 
   checkUserLoginState() {
     if (FirebaseAuth.instance.currentUser != null) {
@@ -121,7 +136,6 @@ class _DownloadScreenState extends State<DownloadScreen> {
                     child: CircularProgressIndicator(),
                   );
                 }
-
                 return ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   physics: const NeverScrollableScrollPhysics(),
@@ -134,9 +148,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
                           children: [
                             const Padding(
                               padding: EdgeInsets.only(top: 160.0),
-                              child: Center(
-                                child: CircularProgressIndicator(),
-                              ),
+                              child: Center(child: CircularProgressIndicator()),
                             ),
                             SizedBox(
                               width: double.infinity,
@@ -216,9 +228,8 @@ class _DownloadScreenState extends State<DownloadScreen> {
                                           context: context,
                                           builder: (context) {
                                             return AlertDialog(
-                                              backgroundColor:
-                                                  const Color.fromARGB(
-                                                      255, 29, 29, 29),
+                                              backgroundColor: Color.fromARGB(
+                                                  255, 26, 26, 26),
                                               title: Column(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
@@ -227,7 +238,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
                                                 children: const [
                                                   Text("Are you sure?"),
                                                   Text(
-                                                    "This step will permanently delete this wallpaper!",
+                                                    "This step will permanently delete this Image!",
                                                     style: TextStyle(
                                                       fontSize: 11,
                                                       fontWeight:
@@ -387,153 +398,393 @@ class _DownloadScreenState extends State<DownloadScreen> {
                         const SizedBox(height: 10),
                         isUserLoggedIn
                             ? Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 24.0),
-                                child: isLiked
-                                    ? CustomRectangle(
-                                        forward_icon: false,
-                                        leadingIcon: false,
-                                        isCenter: true,
-                                        ontap: () async {
-                                          try {
-                                            showDialog(
-                                              context: context,
-                                              barrierDismissible: false,
-                                              builder: (context) =>
-                                                  const Center(
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              ),
-                                            );
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Expanded(
+                                      child: isLiked
+                                          ? CustomRectangle(
+                                              forwardIcon: false,
+                                              leadingIcon: false,
+                                              isCenter: true,
+                                              ontap: () async {
+                                                try {
+                                                  showDialog(
+                                                    context: context,
+                                                    barrierDismissible: false,
+                                                    builder: (context) =>
+                                                        const Center(
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    ),
+                                                  );
 
-                                            FirebaseFirestore.instance
-                                                .collection('wallpapers')
-                                                .doc(snapshot.data!.docs[index]
-                                                    ['wallpaperId'])
-                                                .update({
-                                              'likes': FieldValue.arrayRemove([
-                                                FirebaseAuth
-                                                    .instance.currentUser!.uid
-                                              ]),
-                                            }).then(
-                                              (value) {
-                                                Navigator.canPop(context)
-                                                    ? Navigator.pop(context)
-                                                    : null;
+                                                  FirebaseFirestore.instance
+                                                      .collection('wallpapers')
+                                                      .doc(snapshot
+                                                              .data!.docs[index]
+                                                          ['wallpaperId'])
+                                                      .update({
+                                                    'likes':
+                                                        FieldValue.arrayRemove([
+                                                      FirebaseAuth.instance
+                                                          .currentUser!.uid
+                                                    ]),
+                                                  }).then(
+                                                    (value) {
+                                                      Navigator.canPop(context)
+                                                          ? Navigator.pop(
+                                                              context)
+                                                          : null;
 
-                                                showSnackBar(context,
-                                                    'You unliked this wallpaper!');
+                                                      showSnackBar(context,
+                                                          'You unliked this wallpaper!');
 
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        const HomeScreen(),
-                                                  ),
-                                                );
+                                                      Navigator.of(context)
+                                                          .push(
+                                                        MaterialPageRoute(
+                                                          builder: (_) =>
+                                                              const HomeScreen(),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                  setState(() {
+                                                    isLiked = false;
+                                                  });
+                                                } on PlatformException catch (error) {
+                                                  Navigator.pop(context);
+
+                                                  showSnackBar(context,
+                                                      error.toString());
+                                                }
                                               },
-                                            );
-                                            setState(() {
-                                              isLiked = false;
-                                            });
-                                          } on PlatformException catch (error) {
-                                            Navigator.pop(context);
-
-                                            showSnackBar(
-                                                context, error.toString());
-                                          }
-                                        },
-                                        child: Center(
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: const [
-                                              Icon(Icons.thumb_up_alt_rounded),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                'Liked',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
+                                              child: Center(
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: const [
+                                                    Icon(Icons
+                                                        .thumb_up_alt_rounded),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Text(
+                                                      'Liked',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        )
+                                              )
 
-                                        //  CustomButton(
-                                        //   text: 'Like',
-                                        //   onTap: ()
-                                        // ),
-                                        )
-                                    : CustomRectangle(
-                                        forward_icon: false,
-                                        leadingIcon: false,
-                                        isCenter: true,
-                                        child: Row(
-                                          children: const [
-                                            Icon(Icons.thumb_up_alt_outlined),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text(
-                                              'Like',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        ontap: () async {
-                                          try {
-                                            showDialog(
-                                              context: context,
-                                              barrierDismissible: false,
-                                              builder: (context) =>
-                                                  const Center(
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              ),
-                                            );
-
-                                            FirebaseFirestore.instance
-                                                .collection('wallpapers')
-                                                .doc(snapshot.data!.docs[index]
-                                                    ['wallpaperId'])
-                                                .update({
-                                              'likes': FieldValue.arrayUnion([
-                                                FirebaseAuth
-                                                    .instance.currentUser!.uid
-                                              ]),
-                                            }).then(
-                                              (value) {
-                                                Navigator.canPop(context)
-                                                    ? Navigator.pop(context)
-                                                    : null;
-
-                                                showSnackBar(context,
-                                                    'You liked this wallpaper!');
-
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        const LikedScreen(),
+                                              //  CustomButton(
+                                              //   text: 'Like',
+                                              //   onTap: ()
+                                              // ),
+                                              )
+                                          : CustomRectangle(
+                                              forwardIcon: false,
+                                              leadingIcon: false,
+                                              isCenter: true,
+                                              child: Row(
+                                                children: const [
+                                                  Icon(Icons
+                                                      .thumb_up_alt_outlined),
+                                                  SizedBox(
+                                                    width: 10,
                                                   ),
-                                                );
+                                                  Text(
+                                                    'Like',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              ontap: () async {
+                                                try {
+                                                  showDialog(
+                                                    context: context,
+                                                    barrierDismissible: false,
+                                                    builder: (context) =>
+                                                        const Center(
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    ),
+                                                  );
+
+                                                  FirebaseFirestore.instance
+                                                      .collection('wallpapers')
+                                                      .doc(snapshot
+                                                              .data!.docs[index]
+                                                          ['wallpaperId'])
+                                                      .update({
+                                                    'likes':
+                                                        FieldValue.arrayUnion([
+                                                      FirebaseAuth.instance
+                                                          .currentUser!.uid
+                                                    ]),
+                                                  }).then(
+                                                    (value) {
+                                                      Navigator.canPop(context)
+                                                          ? Navigator.pop(
+                                                              context)
+                                                          : null;
+
+                                                      showSnackBar(context,
+                                                          'You liked this wallpaper!');
+
+                                                      Navigator.of(context)
+                                                          .push(
+                                                        MaterialPageRoute(
+                                                          builder: (_) =>
+                                                              const LikedScreen(),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+
+                                                  setState(() {
+                                                    isLiked = true;
+                                                  });
+                                                } on PlatformException catch (error) {
+                                                  Navigator.pop(context);
+
+                                                  showSnackBar(context,
+                                                      error.toString());
+                                                }
                                               },
-                                            );
+                                            ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: CustomButton(
+                                        text: 'Download',
+                                        onTap: () async {
+                                          showModalBottomSheet<int>(
+                                            backgroundColor: Colors.transparent,
+                                            context: context,
+                                            builder: (context) {
+                                              return Popover(
+                                                child: Column(
+                                                  children: [
+                                                    buildListItem(
+                                                      context,
+                                                      title: 'Save to gallery',
+                                                      leading: Icons
+                                                          .download_done_rounded,
+                                                      onpressed: () async {
+                                                        try {
+                                                          await _askPermission();
+                                                          showDialog(
+                                                            context: context,
+                                                            barrierDismissible:
+                                                                false,
+                                                            builder: (context) =>
+                                                                const Center(
+                                                              child:
+                                                                  CircularProgressIndicator(),
+                                                            ),
+                                                          );
 
-                                            setState(() {
-                                              isLiked = true;
-                                            });
-                                          } on PlatformException catch (error) {
-                                            Navigator.pop(context);
+                                                          var response =
+                                                              await Dio().get(
+                                                            snapshot
+                                                                .data!
+                                                                .docs[index]
+                                                                    ['image']
+                                                                .toString(),
+                                                            options: Options(
+                                                              responseType:
+                                                                  ResponseType
+                                                                      .bytes,
+                                                            ),
+                                                          );
+                                                          await ImageGallerySaver
+                                                              .saveImage(
+                                                            Uint8List.fromList(
+                                                                response.data),
+                                                          );
 
-                                            showSnackBar(
-                                                context, error.toString());
-                                          }
+                                                          showSnackBar(context,
+                                                              'Image saved to gallery!');
+
+                                                          total = widget
+                                                                  .downloads! +
+                                                              1;
+
+                                                          FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  'wallpapers')
+                                                              .doc(snapshot
+                                                                          .data!
+                                                                          .docs[
+                                                                      index][
+                                                                  'wallpaperId'])
+                                                              .update({
+                                                            'downloads': total,
+                                                          }).then((value) {
+                                                            Navigator.canPop(
+                                                                    context)
+                                                                ? Navigator.pop(
+                                                                    context)
+                                                                : null;
+                                                          });
+                                                        } on PlatformException catch (error) {
+                                                          Navigator.pop(
+                                                              context);
+
+                                                          showSnackBar(context,
+                                                              error.toString());
+                                                        }
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    ),
+                                                    buildListItem(
+                                                      context,
+                                                      title:
+                                                          'Set as Home screen',
+                                                      leading: Icons
+                                                          .add_to_home_screen_rounded,
+                                                      isActive: false,
+                                                      onpressed: () async {
+                                                        try {
+                                                          await _askPermission();
+
+                                                          showDialog(
+                                                            context: context,
+                                                            barrierDismissible:
+                                                                false,
+                                                            builder: (context) =>
+                                                                const Center(
+                                                              child:
+                                                                  CircularProgressIndicator(),
+                                                            ),
+                                                          );
+
+                                                          String url =
+                                                              '${snapshot.data!.docs[index]['image']}';
+                                                          var cachedimage =
+                                                              await DefaultCacheManager()
+                                                                  .getSingleFile(
+                                                                      url); //image file
+
+                                                          Uint8List uint8list =
+                                                              Uint8List.fromList(File(
+                                                                      cachedimage
+                                                                          .path)
+                                                                  .readAsBytesSync());
+
+                                                          Crop(
+                                                            image: uint8list,
+                                                            aspectRatio: 4 / 3,
+                                                            initialAreaBuilder:
+                                                                (rect) => Rect.fromLTRB(
+                                                                    rect.left +
+                                                                        24,
+                                                                    rect.top +
+                                                                        32,
+                                                                    rect.right -
+                                                                        24,
+                                                                    rect.bottom -
+                                                                        32),
+                                                            baseColor: Colors
+                                                                .blue.shade900,
+                                                            maskColor: Colors
+                                                                .white
+                                                                .withAlpha(100),
+                                                            radius: 20,
+                                                            cornerDotBuilder: (size,
+                                                                    edgeAlignment) =>
+                                                                const DotControl(
+                                                                    color: Colors
+                                                                        .blue),
+                                                            interactive: true,
+                                                            fixArea: true,
+                                                            controller:
+                                                                _controller,
+                                                            onCropped: (image) {
+                                                              int location =
+                                                                  WallpaperManagerFlutter
+                                                                      .HOME_SCREEN;
+                                                              WallpaperManagerFlutter()
+                                                                  .setwallpaperfromFile(
+                                                                      image,
+                                                                      location);
+                                                            },
+                                                          );
+
+                                                          //Choose screen type
+
+                                                          showSnackBar(context,
+                                                              'Set as Home Screen');
+
+                                                          total = widget
+                                                                  .downloads! +
+                                                              1;
+
+                                                          FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  'wallpapers')
+                                                              .doc(snapshot
+                                                                          .data!
+                                                                          .docs[
+                                                                      index][
+                                                                  'wallpaperId'])
+                                                              .update({
+                                                            'downloads': total,
+                                                          }).then((value) {
+                                                            Navigator.canPop(
+                                                                    context)
+                                                                ? Navigator.pop(
+                                                                    context)
+                                                                : null;
+                                                          });
+                                                        } catch (error) {
+                                                          showSnackBar(context,
+                                                              error.toString());
+                                                        }
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    ),
+                                                    buildListItem(
+                                                      context,
+                                                      title:
+                                                          'Set as Lock screen',
+                                                      leading: Icons
+                                                          .screen_lock_portrait_rounded,
+                                                      onpressed: () {},
+                                                      isActive: false,
+                                                    ),
+                                                    buildListItem(
+                                                      context,
+                                                      title: 'Set both',
+                                                      leading:
+                                                          Icons.check_circle,
+                                                      onpressed: () {},
+                                                      isActive: false,
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
                                         },
                                       ),
+                                    )
+                                  ],
+                                ),
                               )
                             : Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -552,65 +803,6 @@ class _DownloadScreenState extends State<DownloadScreen> {
                                   ),
                                 ),
                               ),
-                        const SizedBox(height: 10),
-                        isUserLoggedIn
-                            ? Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 24.0),
-                                child: CustomButton(
-                                  text: 'Download',
-                                  onTap: () async {
-                                    try {
-                                      showDialog(
-                                        context: context,
-                                        barrierDismissible: false,
-                                        builder: (context) => const Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                      );
-
-                                      var response = await Dio().get(
-                                        snapshot.data!.docs[index]['image']
-                                            .toString(),
-                                        options: Options(
-                                          responseType: ResponseType.bytes,
-                                        ),
-                                      );
-                                      await ImageGallerySaver.saveImage(
-                                        Uint8List.fromList(response.data),
-                                      );
-
-                                      showSnackBar(
-                                          context, 'Image saved to gallery!');
-
-                                      total = widget.downloads! + 1;
-
-                                      FirebaseFirestore.instance
-                                          .collection('wallpapers')
-                                          .doc(snapshot.data!.docs[index]
-                                              ['wallpaperId'])
-                                          .update({
-                                        'downloads': total,
-                                      }).then((value) {
-                                        Navigator.canPop(context)
-                                            ? Navigator.pop(context)
-                                            : null;
-
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (_) => const HomeScreen(),
-                                          ),
-                                        );
-                                      });
-                                    } on PlatformException catch (error) {
-                                      Navigator.pop(context);
-
-                                      showSnackBar(context, error.toString());
-                                    }
-                                  },
-                                ),
-                              )
-                            : Container(),
                         const SizedBox(
                           height: 30,
                         )
@@ -620,102 +812,65 @@ class _DownloadScreenState extends State<DownloadScreen> {
                 );
               },
             ),
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('wallpapers')
+                  .orderBy('downloads', descending: true)
+                  .snapshots(),
+              builder: (context, AsyncSnapshot snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-            // const SizedBox(height: 20),
-            // StreamBuilder<QuerySnapshot>(
-            //   stream: FirebaseFirestore.instance
-            //       .collection('wallpaper')
-            //       .where("createdAt", isEqualTo: clickedImageId)
-            //       // .orderBy('createdAt', descending: true)
-            //       .snapshots(),
-            //   builder: (context, AsyncSnapshot snapshot) {
-            //     if (snapshot.connectionState == ConnectionState.waiting) {
-            //       return const Center(
-            //         child: CircularProgressIndicator(),
-            //       );
-            //     } else if (snapshot.connectionState == ConnectionState.active) {
-            //       if (!snapshot.hasData) {
-            //         return const Center(
-            //           child: CircularProgressIndicator(),
-            //         );
-            //       }
-            //       // return Column(
-            //       //   children: [
-            //       //     Container(
-            //       //       width: double.infinity,
-            //       //       // height: MediaQuery.of(context).size.height / 2,
-            //       //       child: ClipRRect(
-            //       //         child: Image.network(snapshot.data!.docs['Image']),
-            //       //       ),
-            //       //     ),
-            //       //   ],
-            //       // );
-            //       // return CarouselSlider.builder(
-            //       //   itemCount: snapshot.data!.docs.length,
-            //       //   options: CarouselOptions(
-            //       //     // height: 1000,
-            //       //     height: 600,
-            //       //     aspectRatio: 16 / 9,
-
-            //       //     autoPlay: false,
-            //       //     enlargeCenterPage: true,
-            //       //   ),
-            //       //   itemBuilder: (context, index, realIdx) {
-            //       //     return SizedBox(
-            //       //       child: Center(
-            //       //         child: Image.network(
-            //       //           snapshot.data!.docs[index]['Image'],
-            //       //           fit: BoxFit.cover,
-            //       //           width: 1000,
-            //       //         ),
-            //       //       ),
-            //       //     );
-            //       //   },
-            //       // );
-            //       return GridView.builder(
-            //         physics: const NeverScrollableScrollPhysics(),
-            //         shrinkWrap: true,
-            //         itemCount: snapshot.data!.docs.length,
-            //         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            //           crossAxisSpacing: 5,
-            //           mainAxisSpacing: 5,
-            //           crossAxisCount: 3,
-            //           mainAxisExtent: 150,
-            //         ),
-            //         itemBuilder: (BuildContext context, int index) {
-            //           return GestureDetector(
-            //             onTap: (() {
-            //               // Navigator.of(context).pushNamed('/download-screen');
-            //             }),
-            //             child: ClipRRect(
-            //               borderRadius: BorderRadius.circular(8),
-            //               child: CachedNetworkImage(
-            //                 imageUrl: snapshot.data!.docs[index]['Image'],
-            //                 placeholder: (context, url) => Container(
-            //                   color: const Color(0xfff5f8fd),
-            //                 ),
-            //                 fit: BoxFit.cover,
-            //               ),
-            //             ),
-            //           );
-            //         },
-            //       );
-            //     } else {
-            //       return const Center(
-            //         child: Text(
-            //           'There is no tasks',
-            //           style: TextStyle(
-            //             fontSize: 20,
-            //           ),
-            //         ),
-            //       );
-            //     }
-            //   },
-            // ),
-            // // Container(
-            // //   height: 200,
-            // //   child: const PrefetchImageDemo(),
-            // // ),
+                return GridView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(8),
+                  itemCount: snapshot.data!.docs.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisSpacing: 6,
+                    mainAxisSpacing: 6,
+                    crossAxisCount: 2,
+                    mainAxisExtent: 250,
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                    if (snapshot.data!.docs.length != null) {
+                      return ThubmnailWidget(
+                        image: snapshot.data!.docs[index]['image'],
+                        title: snapshot.data!.docs[index]['title'],
+                        downloads: snapshot.data!.docs[index]['downloads'],
+                        onTap: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => DownloadScreen(
+                                wallpaperId: snapshot.data!.docs[index]
+                                    ['wallpaperId'],
+                                downloads: snapshot.data!.docs[index]
+                                    ['downloads'],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }
+                    return const Center(
+                      child: Text(
+                        'Something went wrong...',
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           ],
         ),
       ),

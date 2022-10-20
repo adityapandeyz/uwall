@@ -39,7 +39,7 @@ class AboutAppScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  'Version: 0.3.5+8',
+                  'Version: 0.4.0+9',
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                   ),
@@ -78,7 +78,7 @@ class AboutAppScreen extends StatelessWidget {
                   ),
                   child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Container(
+                      child: SizedBox(
                         height: 100,
                         width: 100,
                         child: Image.asset(

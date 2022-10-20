@@ -6,6 +6,7 @@ import '../screens/profile_screen.dart';
 import '../utils/colors.dart';
 import '../widgets/custom_rectangle.dart';
 
+import '../widgets/thumbnail_widget.dart';
 import 'download_screen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -33,6 +34,7 @@ class _SearchScreenState extends State<SearchScreen> {
         title: Form(
           child: TextFormField(
             controller: searchController,
+            autofocus: true,
             onChanged: (textEntered) {
               setState(
                 () {
@@ -180,25 +182,22 @@ class _SearchScreenState extends State<SearchScreen> {
                                       ),
                                     ),
                                   ),
-                                  child: Container(
-                                    child: Row(
-                                      children: [
-                                        CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                            snapshot.data!.docs[index]
-                                                ['photoUrl'],
-                                          ),
-                                          radius: 26,
-                                        ),
-                                        Text(
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundImage: NetworkImage(
                                           snapshot.data!.docs[index]
-                                              ['fullName'],
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                              ['photoUrl'],
                                         ),
-                                      ],
-                                    ),
+                                        radius: 26,
+                                      ),
+                                      Text(
+                                        snapshot.data!.docs[index]['fullName'],
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               );
@@ -302,25 +301,22 @@ class _SearchScreenState extends State<SearchScreen> {
                                       ),
                                     ),
                                   ),
-                                  child: Container(
-                                    child: Row(
-                                      children: [
-                                        // CircleAvatar(
-                                        //   backgroundImage: NetworkImage(
-                                        //     snapshot.data!.docs[index]
-                                        //         ['photoUrl'],
-                                        //   ),
-                                        //   radius: 26,
-                                        // ),
-                                        Text(
-                                          snapshot.data!.docs[index]
-                                              ['category'],
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                  child: Row(
+                                    children: [
+                                      // CircleAvatar(
+                                      //   backgroundImage: NetworkImage(
+                                      //     snapshot.data!.docs[index]
+                                      //         ['photoUrl'],
+                                      //   ),
+                                      //   radius: 26,
+                                      // ),
+                                      Text(
+                                        snapshot.data!.docs[index]['category'],
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               );
@@ -412,8 +408,12 @@ class _SearchScreenState extends State<SearchScreen> {
                               //   ),
 
                               // );
-                              return GestureDetector(
-                                onTap: (() {
+                              return ThubmnailWidget(
+                                image: snapshot.data!.docs[index]['image'],
+                                title: snapshot.data!.docs[index]['title'],
+                                downloads: snapshot.data!.docs[index]
+                                    ['downloads'],
+                                onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -425,15 +425,36 @@ class _SearchScreenState extends State<SearchScreen> {
                                       ),
                                     ),
                                   );
-                                }),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.network(
-                                    snapshot.data!.docs[index]['image'],
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
+                                },
                               );
+                              // return GestureDetector(
+                              //   onTap: (() {
+                              //     Navigator.push(
+                              //       context,
+                              //       MaterialPageRoute(
+                              //         builder: (_) => DownloadScreen(
+                              //           wallpaperId: snapshot.data!.docs[index]
+                              //               ['wallpaperId'],
+                              //           downloads: snapshot.data!.docs[index]
+                              //               ['downloads'],
+                              //         ),
+                              //       ),
+                              //     );
+                              //   }),
+                              //   child: ThubmnailWidget(
+                              //     image: snapshot.data!.docs[index]['image'],
+                              //     title: snapshot.data!.docs[index]['title'],
+                              //     downloads: snapshot.data!.docs[index]
+                              //         ['downloads'],
+                              //   ),
+                              //   // ClipRRect(
+                              //   //   borderRadius: BorderRadius.circular(8),
+                              //   //   child: Image.network(
+                              //   //     snapshot.data!.docs[index]['image'],
+                              //   //     fit: BoxFit.cover,
+                              //   //   ),
+                              //   // ),
+                              // );
                             },
                           );
                         }

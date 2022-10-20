@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
+import 'package:scale_button/scale_button.dart';
+import 'package:uwall/widgets/user_tile.dart';
 import '../screens/home_screen.dart';
 import '../utils/utils.dart';
 import '../widgets/custom_rectangle.dart';
@@ -223,6 +225,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 SquareBox(
+                                  onTap: () => widget.userId ==
+                                          FirebaseAuth.instance.currentUser!.uid
+                                      ? Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => const MyPosts(),
+                                          ),
+                                        )
+                                      : null,
                                   height: 60,
                                   width: 100,
                                   bColor:
@@ -231,6 +241,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   subtitle: 'Posts',
                                 ),
                                 SquareBox(
+                                  onTap: () => widget.userId ==
+                                          FirebaseAuth.instance.currentUser!.uid
+                                      ? Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => const MyFollowers(),
+                                          ),
+                                        )
+                                      : null,
                                   height: 60,
                                   width: 100,
                                   bColor: const Color.fromARGB(66, 255, 38, 0),
@@ -238,6 +256,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   subtitle: 'Followers',
                                 ),
                                 SquareBox(
+                                  onTap: () => widget.userId ==
+                                          FirebaseAuth.instance.currentUser!.uid
+                                      ? Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                const MyFollowings(),
+                                          ),
+                                        )
+                                      : null,
                                   height: 60,
                                   width: 100,
                                   bColor: const Color.fromARGB(66, 72, 255, 0),
@@ -256,7 +283,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ? Container(
                                             child: isFollowing
                                                 ? CustomRectangle(
-                                                    forward_icon: false,
+                                                    forwardIcon: false,
                                                     leadingIcon: false,
                                                     isCenter: true,
                                                     child: Row(
@@ -335,7 +362,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     },
                                                   )
                                                 : CustomRectangle(
-                                                    forward_icon: false,
+                                                    forwardIcon: false,
                                                     leadingIcon: false,
                                                     isCenter: true,
                                                     child: Row(
@@ -467,56 +494,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                       itemBuilder:
                                           (BuildContext context, int index) {
-                                        if (snapshot.data!.docs.length !=
-                                            null) {
-                                          return GestureDetector(
-                                            onTap: (() {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      DownloadScreen(
-                                                    wallpaperId: snapshot
-                                                            .data!.docs[index]
-                                                        ['wallpaperId'],
-                                                    downloads: snapshot
-                                                            .data!.docs[index]
-                                                        ['downloads'],
-                                                  ),
+                                        return ScaleButton(
+                                          bound: 0.05,
+                                          duration:
+                                              const Duration(milliseconds: 170),
+                                          onTap: (() {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (_) => DownloadScreen(
+                                                  wallpaperId:
+                                                      snapshot.data!.docs[index]
+                                                          ['wallpaperId'],
+                                                  downloads: snapshot.data!
+                                                      .docs[index]['downloads'],
                                                 ),
-                                              );
-                                            }),
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              child: CachedNetworkImage(
-                                                imageUrl: snapshot
-                                                    .data!.docs[index]['image'],
-                                                placeholder: (context, url) =>
-                                                    Container(
-                                                        color: secondaryColor),
-                                                fit: BoxFit.cover,
                                               ),
-                                            ),
-
-                                            // ClipRRect(
-                                            //   borderRadius:
-                                            //       BorderRadius.circular(8),
-                                            //   child: Image.network(
-                                            //     snapshot.data!.docs[index]
-                                            //         ['image'],
-                                            //     fit: BoxFit.cover,
-                                            //   ),
-                                            // ),
-                                          );
-                                        }
-                                        return const Center(
-                                          child: Text(
-                                            'No Posts.',
-                                            style: TextStyle(
-                                              fontSize: 20,
+                                            );
+                                          }),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            child: CachedNetworkImage(
+                                              imageUrl: snapshot
+                                                  .data!.docs[index]['image'],
+                                              placeholder: (context, url) =>
+                                                  Container(
+                                                      color: secondaryColor),
+                                              fit: BoxFit.cover,
                                             ),
                                           ),
+
+                                          // ClipRRect(
+                                          //   borderRadius:
+                                          //       BorderRadius.circular(8),
+                                          //   child: Image.network(
+                                          //     snapshot.data!.docs[index]
+                                          //         ['image'],
+                                          //     fit: BoxFit.cover,
+                                          //   ),
+                                          // ),
                                         );
                                       },
                                     );
@@ -550,5 +567,246 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // ignore: prefer_const_constructors
                 : SignInWidget(),
           );
+  }
+}
+
+class MyPosts extends StatelessWidget {
+  const MyPosts({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('My Posts'),
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('wallpapers')
+            .where("uid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+            // .orderBy('createdAt', descending: true)
+            .snapshots(),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.hasData) {
+              if (snapshot.data.docs.isEmpty) {
+                return const EmptyWarning(
+                  text: 'No Posts!',
+                  icon: Icons.no_photography_outlined,
+                );
+              }
+              return GridView.builder(
+                padding: const EdgeInsets.all(8),
+                itemCount: snapshot.data!.docs.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                  crossAxisCount: 3,
+                  mainAxisExtent: 150,
+                ),
+                itemBuilder: (BuildContext context, int index) {
+                  return ScaleButton(
+                    bound: 0.05,
+                    duration: const Duration(milliseconds: 170),
+                    onTap: (() {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => DownloadScreen(
+                            wallpaperId: snapshot.data!.docs[index]
+                                ['wallpaperId'],
+                            downloads: snapshot.data!.docs[index]['downloads'],
+                          ),
+                        ),
+                      );
+                    }),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: CachedNetworkImage(
+                        imageUrl: snapshot.data!.docs[index]['image'],
+                        placeholder: (context, url) =>
+                            Container(color: secondaryColor),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  );
+                },
+              );
+            }
+
+            return const Center(
+              child: Text(
+                'No Connection.',
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+            );
+          } else {
+            return const Center(
+              child: Text(
+                'No Connection!',
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+class MyFollowers extends StatelessWidget {
+  const MyFollowers({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('My Followers'),
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .where(
+              'following',
+              arrayContains: FirebaseAuth.instance.currentUser!.uid,
+            )
+
+            // .orderBy('createdAt', descending: true)
+            .snapshots(),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.hasData) {
+              if (snapshot.data.docs.isEmpty) {
+                return const EmptyWarning(
+                  text: 'No Followers',
+                  icon: Icons.person_off_rounded,
+                );
+              }
+              return ListView.builder(
+                padding: const EdgeInsets.all(8),
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (BuildContext context, int index) {
+                  if (snapshot.data!.docs.length != null) {
+                    return UserTile(
+                      photoUrl: snapshot.data!.docs[index]['photoUrl'],
+                      name: snapshot.data!.docs[index]['fullName'],
+                      // postCount: '12',
+                      userId: snapshot.data!.docs[index]['uid'],
+                    );
+                  }
+                  return const Center(
+                    child: Text(
+                      'No Posts.',
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                  );
+                },
+              );
+            }
+
+            return const Center(
+              child: Text(
+                'No Connection.',
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+            );
+          } else {
+            return const Center(
+              child: Text(
+                'No Connection!',
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+class MyFollowings extends StatelessWidget {
+  const MyFollowings({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('My Following'),
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .where(
+              'followers',
+              arrayContains: FirebaseAuth.instance.currentUser!.uid,
+            )
+
+            // .orderBy('createdAt', descending: true)
+            .snapshots(),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.hasData) {
+              if (snapshot.data.docs.isEmpty) {
+                return const EmptyWarning(
+                  text: 'No Following',
+                  icon: Icons.person_off_rounded,
+                );
+              }
+              return ListView.builder(
+                padding: const EdgeInsets.all(8),
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return UserTile(
+                    photoUrl: snapshot.data!.docs[index]['photoUrl'],
+                    name: snapshot.data!.docs[index]['fullName'],
+                    // postCount: snapshot.data!.docs.length,
+                    userId: snapshot.data!.docs[index]['uid'],
+                  );
+                },
+              );
+            }
+
+            return const Center(
+              child: Text(
+                'No Connection.',
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+            );
+          } else {
+            return const Center(
+              child: Text(
+                'No Connection!',
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+            );
+          }
+        },
+      ),
+    );
   }
 }

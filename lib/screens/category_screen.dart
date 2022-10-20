@@ -5,6 +5,7 @@ import 'package:parallax_animation/parallax_animation.dart';
 import '../screens/download_screen.dart';
 import '../utils/colors.dart';
 import '../widgets/empty_warning.dart';
+import '../widgets/thumbnail_widget.dart';
 
 class PhotoItem {
   final String image;
@@ -340,47 +341,63 @@ class CategoryView extends StatelessWidget {
               );
             }
 
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: GridView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: snapshot.data!.docs.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisSpacing: 5,
-                    mainAxisSpacing: 5,
-                    crossAxisCount: 3,
-                    mainAxisExtent: 250,
-                  ),
-                  itemBuilder: (BuildContext context, int index) {
-                    return GestureDetector(
-                      onTap: (() {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => DownloadScreen(
-                              wallpaperId: snapshot.data!.docs[index]
-                                  ['wallpaperId'],
-                              downloads: snapshot.data!.docs[index]
-                                  ['downloads'],
-                            ),
-                          ),
-                        );
-                      }),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: CachedNetworkImage(
-                          imageUrl: snapshot.data!.docs[index]['image'],
-                          placeholder: (context, url) =>
-                              Container(color: secondaryColor),
-                          fit: BoxFit.cover,
+            return GridView.builder(
+              itemCount: snapshot.data!.docs.length,
+              padding: const EdgeInsets.all(8),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisSpacing: 5,
+                mainAxisSpacing: 5,
+                crossAxisCount: 3,
+                mainAxisExtent: 250,
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                return ThubmnailWidget(
+                  image: snapshot.data!.docs[index]['image'],
+                  title: snapshot.data!.docs[index]['title'],
+                  downloads: snapshot.data!.docs[index]['downloads'],
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => DownloadScreen(
+                          wallpaperId: snapshot.data!.docs[index]
+                              ['wallpaperId'],
+                          downloads: snapshot.data!.docs[index]['downloads'],
                         ),
                       ),
                     );
                   },
-                ),
-              ),
+                );
+                // return GestureDetector(
+                //   onTap: (() {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //         builder: (_) => DownloadScreen(
+                //           wallpaperId: snapshot.data!.docs[index]
+                //               ['wallpaperId'],
+                //           downloads: snapshot.data!.docs[index]
+                //               ['downloads'],
+                //         ),
+                //       ),
+                //     );
+                //   }),
+                //   child: ThubmnailWidget(
+                //     image: snapshot.data!.docs[index]['image'],
+                //     title: snapshot.data!.docs[index]['title'],
+                //     downloads: snapshot.data!.docs[index]['downloads'],
+                //   ),
+                //   //  ClipRRect(
+                //   //   borderRadius: BorderRadius.circular(8),
+                //   //   child: CachedNetworkImage(
+                //   //     imageUrl: snapshot.data!.docs[index]['image'],
+                //   //     placeholder: (context, url) =>
+                //   //         Container(color: secondaryColor),
+                //   //     fit: BoxFit.cover,
+                //   //   ),
+                //   // ),
+                // );
+              },
             );
           } else {
             return const Center(

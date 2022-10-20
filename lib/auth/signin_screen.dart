@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../auth/forgot_password_screen.dart';
@@ -49,7 +48,9 @@ class _SigninScreenState extends State<SigninScreen> {
             children: [
               const SizedBox(height: 20),
               CustomTextField(
-                lines: 1,
+                autofocus: true,
+                textInputAction: TextInputAction.next,
+                textInputType: TextInputType.emailAddress,
                 controller: _emailController,
                 hintText: 'Email',
                 obsecureText: false,
@@ -60,6 +61,7 @@ class _SigninScreenState extends State<SigninScreen> {
               ),
               const SizedBox(height: 20),
               CustomTextField(
+                textInputAction: TextInputAction.done,
                 lines: 1,
                 controller: _passwordController,
                 hintText: 'Password',
@@ -136,7 +138,7 @@ class _SigninScreenState extends State<SigninScreen> {
         email: _emailController.text, password: _passwordController.text);
     if (res == 'success') {
       // ignore: use_build_context_synchronously
-      showSnackBar(context, 'Welcome back...');
+      showSnackBar(context, 'Hola...');
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const HomeScreen(),

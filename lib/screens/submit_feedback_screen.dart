@@ -56,7 +56,7 @@ class _SubmitFeedbackScreenState extends State<SubmitFeedbackScreen> {
               ontap: () => setState(() {
                 _launched = _launchInBrowser(_googlePlayUrl);
               }),
-              child: Text(
+              child: const Text(
                 'Review on Google Play',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -78,7 +78,7 @@ _launchEmail() async {
     scheme: 'mailto',
     path: 'admin@dresolution.tech',
     query:
-        'subject=App Feedback&body=Uwall Version 00.3.5+8', //add subject and body here
+        'subject=App Feedback&body=Uwall Version 0.4.0+9', //add subject and body here
   );
   var url = params.toString();
 

@@ -6,13 +6,19 @@ class CustomTextField extends StatelessWidget {
   final String hintText;
   final bool obsecureText;
   final customTextFieldValidator;
+  final bool autofocus;
+  final TextInputType textInputType;
+  final TextInputAction textInputAction;
   const CustomTextField({
     Key? key,
     required this.controller,
     required this.hintText,
     required this.obsecureText,
     this.customTextFieldValidator,
-    required this.lines,
+    this.lines = 1,
+    this.autofocus = false,
+    required this.textInputAction,
+    this.textInputType = TextInputType.text,
   }) : super(key: key);
 
   @override
@@ -20,7 +26,9 @@ class CustomTextField extends StatelessWidget {
     return TextFormField(
       maxLines: lines,
       controller: controller,
-      keyboardType: TextInputType.text,
+      autofocus: autofocus,
+      keyboardType: textInputType,
+      textInputAction: textInputAction,
 
       //placeholder: hintText,
 

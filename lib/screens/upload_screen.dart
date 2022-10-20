@@ -13,6 +13,7 @@ import '../utils/colors.dart';
 import '../utils/utils.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_textfield.dart';
+import '../widgets/popover.dart';
 import '../widgets/sign_in_widget.dart';
 
 class UploadScreen extends StatefulWidget {
@@ -42,7 +43,7 @@ class _UploadScreenState extends State<UploadScreen> {
             appBar: AppBar(
               title: Text('Upload'),
             ),
-            body: SignInWidget());
+            body: const SignInWidget());
   }
 }
 
@@ -77,41 +78,66 @@ class _UploadPageState extends State<UploadPage> {
   }
 
   void _showImageDialoge() {
-    showDialog(
+    // showDialog(
+    //   context: context,
+    //   builder: (context) {
+    //     return AlertDialog(
+    //       backgroundColor: const Color.fromARGB(255, 29, 29, 29),
+    //       title: const Text("Please choose an option"),
+    //       content: Column(
+    //         mainAxisSize: MainAxisSize.min,
+    //         children: [
+    //           Row(
+    //             mainAxisAlignment: MainAxisAlignment.center,
+    //             crossAxisAlignment: CrossAxisAlignment.center,
+    //             mainAxisSize: MainAxisSize.min,
+    //             children: [
+    //               InkWell(
+    //                 onTap: (() {
+    //                   _getFromGallery();
+    //                 }),
+    //                 child: Container(
+    //                   height: 80,
+    //                   width: 80,
+    //                   decoration: BoxDecoration(
+    //                     color: Colors.grey,
+    //                     shape: BoxShape.rectangle,
+    //                     borderRadius: BorderRadius.circular(12),
+    //                   ),
+    //                   child: const Icon(
+    //                     Icons.image_rounded,
+    //                     size: 40,
+    //                   ),
+    //                 ),
+    //               ),
+    //               const SizedBox(width: 20),
+    //             ],
+    //           )
+    //         ],
+    //       ),
+    //     );
+    //   },
+    //);
+
+    showModalBottomSheet<int>(
+      backgroundColor: Colors.transparent,
       context: context,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: const Color.fromARGB(255, 29, 29, 29),
-          title: const Text("Please choose an option"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
+        return Popover(
+          child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  InkWell(
-                    onTap: (() {
-                      _getFromGallery();
-                    }),
-                    child: Container(
-                      height: 80,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.image_rounded,
-                        size: 40,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                ],
-              )
+              buildListItem(
+                context,
+                title: 'Select from gallery',
+                leading: Icons.image_rounded,
+                onpressed: _getFromGallery,
+              ),
+              // buildListItem(
+              //   context,
+              //   title: 'Take a photo',
+              //   leading: Icons.camera_enhance_rounded,
+              //   onpressed: _getFromCamera,
+              // ),
             ],
           ),
         );
@@ -306,6 +332,7 @@ class _UploadPageState extends State<UploadPage> {
                 CustomTextField(
                   lines: 1,
                   controller: _titleController,
+                  textInputAction: TextInputAction.next,
                   hintText: 'Title',
                   obsecureText: false,
                   customTextFieldValidator: (value) =>
@@ -315,6 +342,7 @@ class _UploadPageState extends State<UploadPage> {
                 ),
                 const SizedBox(height: 10),
                 CustomTextField(
+                  textInputAction: TextInputAction.done,
                   lines: 4,
                   controller: _descriptionController,
                   hintText: 'Description...',
